@@ -1,847 +1,342 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Prompt -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f7ff',
-                            100: '#e0effe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                            800: '#0c4a6e',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Prompt', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Prompt', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .pb-safe {
-            padding-bottom: env(safe-area-inset-bottom, 80px);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</title>
+  <!-- Google Fonts: Sarabun / Prompt -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    body {
+      background-color: #f0f4f8;
+      color: #333;
+      padding-bottom: 40px;
+    }
+
+    /* Header */
+    .header {
+      background-color: #0b5c82;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    /* Tab Navigation */
+    .tab-nav {
+      display: flex;
+      background-color: #e2e8f0;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: white;
+      color: #0b5c82;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Card Component */
+    .card {
+      background-color: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1a202c;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form Elements */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #4a5568;
+    }
+
+    .form-group label .required {
+      color: #e53e3e;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: #0b5c82;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: #1a2533;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit:hover {
+      background-color: #0b5c82;
+    }
+
+    /* Technician List */
+    .tech-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tech-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .tech-item:last-child {
+      border-bottom: none;
+    }
+
+    .tech-info .tech-name {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 1rem;
+    }
+
+    .tech-info .tech-name .emp-code {
+      color: #0b5c82;
+    }
+
+    .tech-info .tech-dept {
+      font-size: 0.85rem;
+      color: #718096;
+      margin-top: 2px;
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      color: #e53e3e;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: #fff5f5;
+    }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-safe">
+<body>
 
-    <!-- Header Navigation -->
-    <header class="bg-brand-700 text-white sticky top-0 z-30 shadow-md">
-        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-gears text-2xl text-amber-400"></i>
-                <h1 class="text-lg font-bold leading-tight">ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</h1>
-            </div>
-            <button onclick="switchTab('settings')" class="p-2 text-slate-200 hover:text-white relative" title="จัดการข้อมูล">
-                <i class="fa-solid fa-sliders text-xl"></i>
-            </button>
-        </div>
-    </header>
+  <!-- Header -->
+  <header class="header">
+    <h1>⚙️ ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</h1>
+    <div>⚙️</div>
+  </header>
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 py-4">
-
-        <!-- TAB 1: DASHBOARD / OVERVIEW -->
-        <section id="tab-dashboard" class="space-y-4">
-            <!-- Summary Stats -->
-            <div class="grid grid-cols-2 gap-3">
-                <div onclick="filterAndNavigate('รอรับเรื่อง')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-amber-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-xl flex-shrink-0">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
-                    <div>
-                        <div id="stat-pending" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">รอรับเรื่อง</div>
-                    </div>
-                </div>
-
-                <div onclick="filterAndNavigate('กำลังซ่อม')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-blue-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-xl flex-shrink-0">
-                        <i class="fa-solid fa-wrench"></i>
-                    </div>
-                    <div>
-                        <div id="stat-repairing" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">กำลังซ่อม</div>
-                    </div>
-                </div>
-
-                <div onclick="filterAndNavigate('รออะไหล่')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-purple-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-xl flex-shrink-0">
-                        <i class="fa-solid fa-boxes-packing"></i>
-                    </div>
-                    <div>
-                        <div id="stat-waiting-parts" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">รออะไหล่</div>
-                    </div>
-                </div>
-
-                <div onclick="filterAndNavigate('ซ่อมเสร็จสิ้น')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-emerald-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 text-xl flex-shrink-0">
-                        <i class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div>
-                        <div id="stat-completed" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">ซ่อมเสร็จสิ้น</div>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="switchTab('create')" class="w-full bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between transition-all">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                    <div class="text-left">
-                        <div class="font-bold">แจ้งซ่อมเครื่องจักรใหม่</div>
-                        <div class="text-xs text-brand-100">คลิกเพื่อกรอกรายละเอียดและถ่ายรูป</div>
-                    </div>
-                </div>
-                <i class="fa-solid fa-chevron-right text-brand-200"></i>
-            </button>
-
-            <div class="space-y-3">
-                <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-slate-700 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-brand-600"></i> งานแจ้งซ่อมล่าสุด
-                    </h2>
-                    <button onclick="switchTab('orders')" class="text-xs font-semibold text-brand-600 hover:underline">ดูทั้งหมด</button>
-                </div>
-                <div id="dashboard-orders-list" class="space-y-3"></div>
-            </div>
-        </section>
-
-        <!-- TAB 2: CREATE REQUEST FORM -->
-        <section id="tab-create" class="hidden space-y-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 border-b pb-3 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-file-circle-plus text-brand-600"></i> ฟอร์มแจ้งซ่อมเครื่องจักร
-                </h2>
-                <form id="repair-form" onsubmit="handleCreateOrder(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">เลือกเครื่องจักร <span class="text-rose-500">*</span></label>
-                        <select id="form-machine-id" required class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ระดับความเร่งด่วน</label>
-                        <select id="form-urgency" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="ปกติ">ปกติ (Normal)</option>
-                            <option value="ด่วน">ด่วน (Urgent)</option>
-                            <option value="ด่วนที่สุด">ด่วนที่สุด (Emergency)</option>
-                        </select>
-                    </div>
-
-                    <!-- ข้อมูลผู้แจ้งซ่อม (เพิ่มรหัสพนักงาน + ชื่อเล่น) -->
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <span class="text-xs font-bold text-slate-700 block">ข้อมูลผู้แจ้งซ่อม <span class="text-rose-500">*</span></span>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">รหัสพนักงาน</label>
-                                <input type="text" id="form-reporter-emp-id" placeholder="เช่น EMP-01" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">ชื่อ-นามสกุล <span class="text-rose-500">*</span></label>
-                                <input type="text" id="form-reporter-name" required placeholder="ชื่อจริง" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">ชื่อเล่น</label>
-                                <input type="text" id="form-reporter-nickname" placeholder="ชื่อเล่น" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รายละเอียดอาการเสีย / ปัญหาที่พบ <span class="text-rose-500">*</span></label>
-                        <textarea id="form-symptom" required rows="3" placeholder="ระบุอาการเสีย..." class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
-                    </div>
-
-                    <div class="pt-2">
-                        <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md transition-all">
-                            <i class="fa-solid fa-paper-plane mr-1"></i> บันทึกส่งแจ้งซ่อม
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- TAB 3: WORK ORDERS LIST -->
-        <section id="tab-orders" class="hidden space-y-4">
-            <!-- Filter Bar -->
-            <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
-                <button onclick="filterOrders('ทั้งหมด')" class="filter-btn bg-brand-600 text-white px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ทั้งหมด</button>
-                <button onclick="filterOrders('รอรับเรื่อง')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รอรับเรื่อง</button>
-                <button onclick="filterOrders('กำลังซ่อม')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">กำลังซ่อม</button>
-                <button onclick="filterOrders('รออะไหล่')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รออะไหล่</button>
-                <button onclick="filterOrders('ซ่อมเสร็จสิ้น')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ซ่อมเสร็จสิ้น</button>
-            </div>
-
-            <div id="full-orders-list" class="space-y-3"></div>
-        </section>
-
-        <!-- TAB 4: DATA MANAGEMENT -->
-        <section id="tab-settings" class="hidden space-y-4">
-            <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-semibold">
-                <button onclick="switchSettingsSubTab('mechanics')" id="subtab-btn-mechanics" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-brand-700 text-center">
-                    <i class="fa-solid fa-user-gear mr-1"></i> รายชื่อช่าง
-                </button>
-                <button onclick="switchSettingsSubTab('machines')" id="subtab-btn-machines" class="flex-1 py-2 rounded-lg text-slate-600 text-center">
-                    <i class="fa-solid fa-industry mr-1"></i> รายชื่อเครื่องจักร
-                </button>
-            </div>
-
-            <!-- SUB TAB: MECHANICS MANAGEMENT -->
-            <div id="subtab-mechanics" class="space-y-3">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-user-plus text-brand-600"></i> เพิ่มรายชื่อช่างใหม่
-                    </h3>
-                    <form onsubmit="handleAddMechanic(event)" class="space-y-3">
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">รหัสพนักงาน <span class="text-rose-500">*</span></label>
-                                <input type="text" id="add-tech-emp-id" required placeholder="เช่น TECH-01" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">ชื่อ-นามสกุล <span class="text-rose-500">*</span></label>
-                                <input type="text" id="add-tech-name" required placeholder="ชื่อจริง-นามสกุล" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">ชื่อเล่น</label>
-                                <input type="text" id="add-tech-nickname" placeholder="เช่น ชาย" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-semibold text-slate-500 mb-1">ความเชี่ยวชาญ / แผนก</label>
-                            <input type="text" id="add-tech-skill" placeholder="เช่น ไฟฟ้า, เครื่องกล" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        </div>
-                        <button type="submit" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl">
-                            <i class="fa-solid fa-plus mr-1"></i> บันทึกเพิ่มรายชื่อช่าง
-                        </button>
-                    </form>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">รายชื่อช่างในระบบ</h3>
-                    <div id="mechanics-list" class="divide-y divide-slate-100"></div>
-                </div>
-            </div>
-
-            <!-- SUB TAB: MACHINES MANAGEMENT -->
-            <div id="subtab-machines" class="hidden space-y-3">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-plus-circle text-brand-600"></i> <span id="mc-form-title">เพิ่มเครื่องจักรใหม่</span>
-                    </h3>
-                    <form id="machine-form" onsubmit="handleSaveMachine(event)" class="space-y-3">
-                        <input type="hidden" id="edit-mc-original-id">
-                        
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">รหัสเครื่องจักร</label>
-                                <input type="text" id="add-mc-code" required placeholder="เช่น L188" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">ชื่อเครื่องจักร</label>
-                                <input type="text" id="add-mc-name" required placeholder="เช่น จักรลา" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                        </div>
-
-                        <!-- ตำแหน่งที่ตั้ง (Input + Datalist) -->
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">ตำแหน่งที่ตั้ง</label>
-                                <input type="text" id="add-mc-location" list="location-suggestions" placeholder="เช่น ชั้น 1" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                <datalist id="location-suggestions">
-                                    <option value="ชั้น 1"></option>
-                                    <option value="ชั้น 2"></option>
-                                    <option value="ชั้น 3"></option>
-                                    <option value="ชั้น 4"></option>
-                                </datalist>
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">ไลน์ผลิต</label>
-                                <input type="text" id="add-mc-line" placeholder="เช่น ทีม81 หรือ Line 2" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                        </div>
-
-                        <div class="flex gap-2 pt-1">
-                            <button type="submit" id="mc-submit-btn" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl">
-                                <i class="fa-solid fa-plus mr-1"></i> เพิ่มเครื่องจักร
-                            </button>
-                            <button type="button" id="mc-cancel-btn" onclick="resetMachineForm()" class="hidden py-2.5 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl">
-                                ยกเลิก
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">รายการเครื่องจักรทั้งหมด</h3>
-                    <div id="machines-list" class="divide-y divide-slate-100"></div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- MODAL: COMPLETE/SUBMIT REPAIR WORK -->
-    <div id="action-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 shadow-xl">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-bold text-slate-800 text-base" id="modal-title">บันทึกการซ่อม / ส่งงาน</h3>
-                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form id="modal-form" onsubmit="handleSaveRepairWork(event)" class="space-y-3">
-                <input type="hidden" id="modal-order-id">
-                
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">มอบหมายช่างผู้ซ่อม <span class="text-rose-500">*</span></label>
-                    <select id="modal-mechanic-select" required class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">สาเหตุและวิธีแก้ไขปัญหา <span class="text-rose-500">*</span></label>
-                    <textarea id="modal-solution" required rows="3" placeholder="ระบุสาเหตุของปัญหาและขั้นตอนการแก้ไข..." class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รายการอะไหล่ที่เปลี่ยน</label>
-                        <input type="text" id="modal-parts" placeholder="เช่น ลูกปืน, สายพาน" class="p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ค่าใช้จ่าย/ราคา (บาท)</label>
-                        <input type="number" id="modal-cost" placeholder="0.00" class="p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 w-full">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">สถานะงานซ่อม</label>
-                    <select id="modal-status" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        <option value="รอรับเรื่อง">รอรับเรื่อง</option>
-                        <option value="กำลังซ่อม">กำลังซ่อม (In Progress)</option>
-                        <option value="รออะไหล่">รออะไหล่ (Waiting Parts)</option>
-                        <option value="ซ่อมเสร็จสิ้น">ซ่อมเสร็จสิ้น (Completed)</option>
-                    </select>
-                </div>
-
-                <div class="pt-3 space-y-2">
-                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md">
-                        <i class="fa-solid fa-check-circle mr-1"></i> บันทึกผลการซ่อมส่งงาน
-                    </button>
-                    <button type="button" onclick="deleteWorkOrderFromModal()" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-medium text-xs rounded-xl border border-rose-200">
-                        <i class="fa-solid fa-trash-can mr-1"></i> ลบรายการแจ้งซ่อมนี้
-                    </button>
-                </div>
-            </form>
-        </div>
+  <div class="container">
+    <!-- Tabs -->
+    <div class="tab-nav">
+      <button class="tab-btn active">👤 รายชื่อช่าง</button>
+      <button class="tab-btn">🏭 รายชื่อเครื่องจักร</button>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 shadow-lg">
-        <div class="max-w-md mx-auto flex justify-around py-2">
-            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item text-brand-600 flex flex-col items-center">
-                <i class="fa-solid fa-chart-pie text-lg"></i>
-                <span class="text-[10px] font-medium mt-0.5">หน้าหลัก</span>
-            </button>
-            <button onclick="switchTab('create')" id="nav-create" class="nav-item text-slate-400 flex flex-col items-center">
-                <i class="fa-solid fa-circle-plus text-lg"></i>
-                <span class="text-[10px] font-medium mt-0.5">แจ้งซ่อม</span>
-            </button>
-            <button onclick="switchTab('orders')" id="nav-orders" class="nav-item text-slate-400 flex flex-col items-center">
-                <i class="fa-solid fa-rectangle-list text-lg"></i>
-                <span class="text-[10px] font-medium mt-0.5">งานซ่อม</span>
-            </button>
-            <button onclick="switchTab('settings')" id="nav-settings" class="nav-item text-slate-400 flex flex-col items-center">
-                <i class="fa-solid fa-sliders text-lg"></i>
-                <span class="text-[10px] font-medium mt-0.5">ตั้งค่า/ข้อมูล</span>
-            </button>
+    <!-- Form Card -->
+    <div class="card">
+      <div class="card-title">
+        👤+ เพิ่มรายชื่อช่างใหม่
+      </div>
+      <form id="addTechForm">
+        <div class="form-grid">
+          <!-- 1. รหัสพนักงาน -->
+          <div class="form-group" style="margin-bottom:0;">
+            <label>รหัสพนักงาน <span class="required">*</span></label>
+            <input type="text" id="empCode" class="form-control" placeholder="เช่น TECH-01" required>
+          </div>
+
+          <!-- 2. ชื่อเล่น (แทนที่ชื่อจริง) -->
+          <div class="form-group" style="margin-bottom:0;">
+            <label>ชื่อเล่น <span class="required">*</span></label>
+            <input type="text" id="nickname" class="form-control" placeholder="เช่น ชาย" required>
+          </div>
         </div>
-    </nav>
 
-    <script>
-        let currentFilterStatus = 'ทั้งหมด';
+        <!-- 3. ความเชี่ยวชาญ / แผนก -->
+        <div class="form-group">
+          <label>ความเชี่ยวชาญ / แผนก</label>
+          <input type="text" id="skill" class="form-control" placeholder="เช่น ไฟฟ้า, เครื่องกล">
+        </div>
 
-        let machines = JSON.parse(localStorage.getItem('app_machines')) || [
-            { id: 'L188', name: 'จักรลา', location: 'ชั้น 1', line: 'ทีม81' },
-            { id: 'MC-002', name: 'เตาอบไมโครเวฟ StarLam', location: 'ชั้น 2', line: 'Line 2' }
-        ];
+        <button type="submit" class="btn-submit">
+          + บันทึกเพิ่มรายชื่อช่าง
+        </button>
+      </form>
+    </div>
 
-        let mechanics = JSON.parse(localStorage.getItem('app_mechanics')) || [
-            { empId: 'T001', name: 'สมชาย ดีเลิศ', nickname: 'ชาย', skill: 'ไฟฟ้า' },
-            { empId: 'T002', name: 'วิชัย เก่งกาจ', nickname: 'ชัย', skill: 'เครื่องกล' }
-        ];
+    <!-- Technician List Card -->
+    <div class="card">
+      <div class="card-title">
+        รายชื่อช่างในระบบ
+      </div>
+      <div class="tech-list" id="techListContainer">
+        <!-- รายการช่างจะถูกสร้างผ่าน JavaScript -->
+      </div>
+    </div>
+  </div>
 
-        let workOrders = JSON.parse(localStorage.getItem('app_orders')) || [
-            {
-                id: 'WO-2026100202',
-                machineId: 'L188',
-                symptom: 'จักรมีเสียงดัง',
-                urgency: 'ปกติ',
-                reporterEmpId: 'E101',
-                reporterName: 'สมพงษ์',
-                reporterNickname: 'พงษ์',
-                status: 'รอรับเรื่อง',
-                mechanic: '-',
-                solution: '',
-                parts: '-',
-                cost: 0,
-                createdAt: '2/10/2569 12:38'
-            }
-        ];
+  <script>
+    // ข้อมูลเริ่มต้นสำหรับทดสอบ (ใช้รหัสพนักงาน + ชื่อเล่น)
+    let technicians = [
+      { id: 1, empCode: 'TECH-01', nickname: 'สมชาย', skill: 'ระบบไฟฟ้า/PLC' },
+      { id: 2, empCode: 'TECH-02', nickname: 'วิชัย', skill: 'ไฮดรอลิก/เครื่องกล' }
+    ];
 
-        function saveData() {
-            localStorage.setItem('app_machines', JSON.stringify(machines));
-            localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
-            localStorage.setItem('app_orders', JSON.stringify(workOrders));
-        }
+    // ฟังก์ชันแสดงรายการช่าง
+    function renderTechList() {
+      const container = document.getElementById('techListContainer');
+      container.innerHTML = '';
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderMachineOptions();
-            renderMechanicsOptions();
-            renderDashboard();
-            renderOrdersList();
-            renderMechanicsList();
-            renderMachinesList();
-        });
+      if (technicians.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#a0aec0; padding:10px;">ไม่มีข้อมูลช่างในระบบ</div>';
+        return;
+      }
 
-        function switchTab(tabId) {
-            ['dashboard', 'create', 'orders', 'settings'].forEach(id => {
-                const el = document.getElementById(`tab-${id}`);
-                const nav = document.getElementById(`nav-${id}`);
-                if (id === tabId) {
-                    el.classList.remove('hidden');
-                    nav.classList.add('text-brand-600');
-                    nav.classList.remove('text-slate-400');
-                } else {
-                    el.classList.add('hidden');
-                    nav.classList.remove('text-brand-600');
-                    nav.classList.add('text-slate-400');
-                }
-            });
-            window.scrollTo(0, 0);
-        }
+      technicians.forEach((tech) => {
+        const item = document.createElement('div');
+        item.className = 'tech-item';
+        item.innerHTML = `
+          <div class="tech-info">
+            <div class="tech-name">
+              <span class="emp-code">[${tech.empCode}]</span> ช่าง${tech.nickname}
+            </div>
+            <div class="tech-dept">ความเชี่ยวชาญ/แผนก: ${tech.skill || '-'}</div>
+          </div>
+          <button class="btn-delete" onclick="deleteTech(${tech.id})" title="ลบข้อมูล">
+            🗑️
+          </button>
+        `;
+        container.appendChild(item);
+      });
+    }
 
-        function filterAndNavigate(status) {
-            filterOrders(status);
-            switchTab('orders');
-        }
+    // ฟังก์ชันเพิ่มช่างใหม่
+    document.getElementById('addTechForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const empCode = document.getElementById('empCode').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      const skill = document.getElementById('skill').value.trim();
 
-        function filterOrders(status) {
-            currentFilterStatus = status.trim();
-            
-            const buttons = document.querySelectorAll('.filter-btn');
-            buttons.forEach(btn => {
-                if (btn.innerText.trim().includes(currentFilterStatus)) {
-                    btn.className = "filter-btn bg-brand-600 text-white px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm";
-                } else {
-                    btn.className = "filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm";
-                }
-            });
+      if (empCode && nickname) {
+        const newTech = {
+          id: Date.now(),
+          empCode: empCode,
+          nickname: nickname,
+          skill: skill
+        };
 
-            renderOrdersList();
-        }
+        technicians.push(newTech);
+        renderTechList();
 
-        function renderOrdersList() {
-            const container = document.getElementById('full-orders-list');
-            let filtered = workOrders;
+        // ล้างข้อมูลในฟอร์ม
+        this.reset();
+      }
+    });
 
-            if (currentFilterStatus !== 'ทั้งหมด') {
-                filtered = workOrders.filter(o => (o.status || '').trim() === currentFilterStatus);
-            }
+    // ฟังก์ชันลบช่าง
+    function deleteTech(id) {
+      technicians = technicians.filter(tech => tech.id !== id);
+      renderTechList();
+    }
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 text-xs">ไม่พบรายการแจ้งซ่อม</div>`;
-                return;
-            }
-            container.innerHTML = [...filtered].reverse().map(o => createOrderCardHTML(o)).join('');
-        }
-
-        function renderDashboard() {
-            const pendingCount = workOrders.filter(o => (o.status || '').trim() === 'รอรับเรื่อง' || o.status === 'รอดำเนินการ').length;
-            const repairingCount = workOrders.filter(o => (o.status || '').trim() === 'กำลังซ่อม').length;
-            const waitingPartsCount = workOrders.filter(o => (o.status || '').trim() === 'รออะไหล่').length;
-            const completedCount = workOrders.filter(o => (o.status || '').trim() === 'ซ่อมเสร็จสิ้น' || o.status === 'เสร็จสิ้น').length;
-
-            document.getElementById('stat-pending').innerText = pendingCount;
-            document.getElementById('stat-repairing').innerText = repairingCount;
-            document.getElementById('stat-waiting-parts').innerText = waitingPartsCount;
-            document.getElementById('stat-completed').innerText = completedCount;
-
-            const recentOrders = [...workOrders].reverse().slice(0, 3);
-            const container = document.getElementById('dashboard-orders-list');
-            
-            if (recentOrders.length === 0) {
-                container.innerHTML = `<div class="bg-white p-6 rounded-2xl text-center text-slate-400 text-xs">ยังไม่มีรายการแจ้งซ่อม</div>`;
-                return;
-            }
-
-            container.innerHTML = recentOrders.map(o => createOrderCardHTML(o)).join('');
-        }
-
-        function createOrderCardHTML(o) {
-            const mc = machines.find(m => m.id === o.machineId) || { name: 'เครื่องจักรทั่วไป', location: '-', line: '-' };
-            const statusStr = (o.status || '').trim();
-            
-            let statusBadge = '<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รอรับเรื่อง</span>';
-            if (statusStr === 'กำลังซ่อม') {
-                statusBadge = '<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">กำลังซ่อม</span>';
-            } else if (statusStr === 'รออะไหล่') {
-                statusBadge = '<span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รออะไหล่</span>';
-            } else if (statusStr === 'ซ่อมเสร็จสิ้น' || statusStr === 'เสร็จสิ้น') {
-                statusBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">ซ่อมเสร็จสิ้น</span>';
-            }
-
-            const urgencyBadge = o.urgency === 'ด่วนที่สุด' 
-                ? '<span class="text-rose-600 bg-rose-50 border border-rose-200 text-[10px] font-semibold px-2 py-0.5 rounded-md">ด่วนที่สุด</span>'
-                : o.urgency === 'ด่วน'
-                ? '<span class="text-amber-600 bg-amber-50 border border-amber-200 text-[10px] font-semibold px-2 py-0.5 rounded-md">ด่วน</span>'
-                : '<span class="text-slate-500 bg-slate-100 text-[10px] font-semibold px-2 py-0.5 rounded-md">ปกติ</span>';
-
-            // จัดรูปแบบข้อมูลผู้แจ้ง
-            let reporterText = o.reporterName || o.reporter || '-';
-            if (o.reporterNickname) reporterText += ` (${o.reporterNickname})`;
-            if (o.reporterEmpId) reporterText = `[${o.reporterEmpId}] ` + reporterText;
-
-            return `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2 relative">
-                    <div class="flex justify-between items-start pr-6">
-                        <div>
-                            <span class="text-xs font-bold text-slate-400">${o.id}</span>
-                            <h3 class="font-bold text-slate-800 text-sm">${mc.name} (${o.machineId})</h3>
-                            <p class="text-[11px] text-slate-500">
-                                <i class="fa-solid fa-location-dot"></i> ${mc.location || '-'} | <i class="fa-solid fa-industry"></i> ${mc.line || '-'}
-                            </p>
-                        </div>
-                        <div class="flex flex-col items-end gap-1">
-                            ${statusBadge}
-                            ${urgencyBadge}
-                        </div>
-                    </div>
-
-                    <button onclick="deleteWorkOrder('${o.id}')" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 p-1 transition-colors" title="ลบงานซ่อม">
-                        <i class="fa-solid fa-trash-can text-sm"></i>
-                    </button>
-
-                    <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-slate-700">
-                        <span class="font-semibold text-slate-800">อาการ:</span> ${o.symptom}
-                    </div>
-
-                    ${o.solution ? `
-                        <div class="text-xs text-emerald-800 bg-emerald-50/60 p-2 rounded-lg">
-                            <span class="font-semibold">วิธีแก้ไข:</span> ${o.solution}
-                        </div>
-                    ` : ''}
-
-                    <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1 border-t">
-                        <span>ผู้แจ้ง: ${reporterText} | ${o.createdAt}</span>
-                        <button onclick="openActionModal('${o.id}')" class="text-xs font-semibold text-brand-600 hover:text-brand-800 bg-brand-50 px-2.5 py-1 rounded-lg">
-                            <i class="fa-solid fa-wrench"></i> ${statusStr === 'ซ่อมเสร็จสิ้น' || statusStr === 'เสร็จสิ้น' ? 'ดู/แก้ไข' : 'จัดการงาน'}
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function handleCreateOrder(e) {
-            e.preventDefault();
-            const now = new Date();
-            const dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-            const newId = `WO-${dateStr}${String(workOrders.length + 1).padStart(2, '0')}`;
-
-            const newOrder = {
-                id: newId,
-                machineId: document.getElementById('form-machine-id').value,
-                urgency: document.getElementById('form-urgency').value,
-                reporterEmpId: document.getElementById('form-reporter-emp-id').value.trim(),
-                reporterName: document.getElementById('form-reporter-name').value.trim(),
-                reporterNickname: document.getElementById('form-reporter-nickname').value.trim(),
-                symptom: document.getElementById('form-symptom').value,
-                status: 'รอรับเรื่อง',
-                mechanic: '-',
-                solution: '',
-                parts: '-',
-                cost: 0,
-                createdAt: `${now.toLocaleDateString('th-TH')} ${now.toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'})}`
-            };
-
-            workOrders.push(newOrder);
-            saveData();
-
-            document.getElementById('repair-form').reset();
-            renderDashboard();
-            renderOrdersList();
-            alert('ส่งข้อมูลแจ้งซ่อมเรียบร้อยแล้ว!');
-            switchTab('dashboard');
-        }
-
-        function deleteWorkOrder(orderId) {
-            if (confirm(`คุณต้องการลบรายการแจ้งซ่อมรหัส ${orderId} ใช่หรือไม่?`)) {
-                workOrders = workOrders.filter(o => o.id !== orderId);
-                saveData();
-                renderDashboard();
-                renderOrdersList();
-            }
-        }
-
-        function deleteWorkOrderFromModal() {
-            const orderId = document.getElementById('modal-order-id').value;
-            if (orderId) {
-                deleteWorkOrder(orderId);
-                closeModal();
-            }
-        }
-
-        function openActionModal(orderId) {
-            const order = workOrders.find(o => o.id === orderId);
-            if (!order) return;
-
-            renderMechanicsOptions();
-            document.getElementById('modal-order-id').value = order.id;
-            document.getElementById('modal-solution').value = order.solution || '';
-            document.getElementById('modal-parts').value = order.parts !== '-' ? order.parts : '';
-            document.getElementById('modal-cost').value = order.cost || '';
-            document.getElementById('modal-status').value = (order.status || 'รอรับเรื่อง').trim();
-            
-            if (order.mechanic && order.mechanic !== '-') {
-                document.getElementById('modal-mechanic-select').value = order.mechanic;
-            }
-
-            document.getElementById('action-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('action-modal').classList.add('hidden');
-        }
-
-        function handleSaveRepairWork(e) {
-            e.preventDefault();
-            const orderId = document.getElementById('modal-order-id').value;
-            const orderIndex = workOrders.findIndex(o => o.id === orderId);
-
-            if (orderIndex !== -1) {
-                workOrders[orderIndex].mechanic = document.getElementById('modal-mechanic-select').value;
-                workOrders[orderIndex].solution = document.getElementById('modal-solution').value;
-                workOrders[orderIndex].parts = document.getElementById('modal-parts').value || '-';
-                workOrders[orderIndex].cost = parseFloat(document.getElementById('modal-cost').value) || 0;
-                workOrders[orderIndex].status = document.getElementById('modal-status').value;
-
-                saveData();
-                renderDashboard();
-                renderOrdersList();
-                closeModal();
-                alert('บันทึกข้อมูลการซ่อมเรียบร้อยแล้ว!');
-            }
-        }
-
-        function switchSettingsSubTab(subTabId) {
-            const techTab = document.getElementById('subtab-mechanics');
-            const mcTab = document.getElementById('subtab-machines');
-            const techBtn = document.getElementById('subtab-btn-mechanics');
-            const mcBtn = document.getElementById('subtab-btn-machines');
-
-            if (subTabId === 'mechanics') {
-                techTab.classList.remove('hidden');
-                mcTab.classList.add('hidden');
-                techBtn.className = "flex-1 py-2 rounded-lg bg-white shadow-sm text-brand-700 text-center font-semibold";
-                mcBtn.className = "flex-1 py-2 rounded-lg text-slate-600 text-center font-semibold";
-            } else {
-                mcTab.classList.remove('hidden');
-                techTab.classList.add('hidden');
-                mcBtn.className = "flex-1 py-2 rounded-lg bg-white shadow-sm text-brand-700 text-center font-semibold";
-                techBtn.className = "flex-1 py-2 rounded-lg text-slate-600 text-center font-semibold";
-            }
-        }
-
-        function renderMachineOptions() {
-            const select = document.getElementById('form-machine-id');
-            select.innerHTML = '<option value="">-- เลือกเครื่องจักร --</option>' + 
-                machines.map(m => `<option value="${m.id}">${m.id} - ${m.name} [${m.location || '-'} / ${m.line || '-'}]</option>`).join('');
-        }
-
-        function renderMechanicsOptions() {
-            const select = document.getElementById('modal-mechanic-select');
-            select.innerHTML = '<option value="">-- เลือกช่างผู้รับผิดชอบ --</option>' + 
-                mechanics.map(m => {
-                    const nick = m.nickname ? ` (${m.nickname})` : '';
-                    const empCode = m.empId ? `[${m.empId}] ` : '';
-                    const display = `${empCode}${m.name}${nick} [${m.skill || 'ทั่วไป'}]`;
-                    return `<option value="${display}">${display}</option>`;
-                }).join('');
-        }
-
-        function renderMachinesList() {
-            const container = document.getElementById('machines-list');
-            if (machines.length === 0) {
-                container.innerHTML = `<div class="text-center py-4 text-xs text-slate-400">ยังไม่มีข้อมูลเครื่องจักร</div>`;
-                return;
-            }
-            container.innerHTML = machines.map((m) => `
-                <div class="py-2.5 flex justify-between items-center text-xs">
-                    <div>
-                        <div class="font-bold text-brand-700">${m.id} - ${m.name}</div>
-                        <div class="text-[10px] text-slate-400">
-                            ที่ตั้ง: <span class="font-medium text-slate-600">${m.location || '-'}</span> | ไลน์ผลิต: <span class="font-medium text-slate-600">${m.line || '-'}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="editMachine('${m.id}')" class="text-amber-600 hover:text-amber-800 p-1 font-medium text-[11px]" title="แก้ไข">
-                            <i class="fa-solid fa-pen-to-square"></i> แก้ไข
-                        </button>
-                        <button onclick="deleteMachine('${m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="ลบ">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function handleSaveMachine(e) {
-            e.preventDefault();
-            const originalId = document.getElementById('edit-mc-original-id').value;
-            const id = document.getElementById('add-mc-code').value.trim();
-            const name = document.getElementById('add-mc-name').value.trim();
-            const location = document.getElementById('add-mc-location').value.trim();
-            const line = document.getElementById('add-mc-line').value.trim();
-
-            if (originalId) {
-                const index = machines.findIndex(m => m.id === originalId);
-                if (index !== -1) {
-                    machines[index] = { id, name, location, line };
-                    alert('แก้ไขข้อมูลเครื่องจักรเรียบร้อยแล้ว!');
-                }
-            } else {
-                if (machines.some(m => m.id === id)) {
-                    alert('รหัสเครื่องจักรนี้มีในระบบแล้ว!');
-                    return;
-                }
-                machines.push({ id, name, location, line });
-                alert('เพิ่มเครื่องจักรสำเร็จ!');
-            }
-
-            saveData();
-            resetMachineForm();
-            renderMachinesList();
-            renderMachineOptions();
-            renderDashboard();
-            renderOrdersList();
-        }
-
-        function editMachine(id) {
-            const mc = machines.find(m => m.id === id);
-            if (!mc) return;
-
-            document.getElementById('edit-mc-original-id').value = mc.id;
-            document.getElementById('add-mc-code').value = mc.id;
-            document.getElementById('add-mc-name').value = mc.name;
-            document.getElementById('add-mc-location').value = mc.location || '';
-            document.getElementById('add-mc-line').value = mc.line || '';
-
-            document.getElementById('mc-form-title').innerText = 'แก้ไขข้อมูลเครื่องจักร';
-            document.getElementById('mc-submit-btn').innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการแก้ไข';
-            document.getElementById('mc-cancel-btn').classList.remove('hidden');
-
-            switchSettingsSubTab('machines');
-            window.scrollTo(0, 0);
-        }
-
-        function resetMachineForm() {
-            document.getElementById('edit-mc-original-id').value = '';
-            document.getElementById('machine-form').reset();
-            document.getElementById('mc-form-title').innerText = 'เพิ่มเครื่องจักรใหม่';
-            document.getElementById('mc-submit-btn').innerHTML = '<i class="fa-solid fa-plus mr-1"></i> เพิ่มเครื่องจักร';
-            document.getElementById('mc-cancel-btn').classList.add('hidden');
-        }
-
-        function deleteMachine(id) {
-            if (confirm(`ยืนยันลบเครื่องจักร ${id}?`)) {
-                machines = machines.filter(m => m.id !== id);
-                saveData();
-                renderMachinesList();
-                renderMachineOptions();
-            }
-        }
-
-        function renderMechanicsList() {
-            const container = document.getElementById('mechanics-list');
-            if (mechanics.length === 0) {
-                container.innerHTML = `<div class="text-center py-4 text-xs text-slate-400">ยังไม่มีรายชื่อช่าง</div>`;
-                return;
-            }
-            container.innerHTML = mechanics.map(m => `
-                <div class="py-2.5 flex justify-between items-center text-xs">
-                    <div>
-                        <div class="font-semibold text-slate-800">
-                            <span class="text-brand-600 font-bold">[${m.empId || 'ไม่ระบุ'}]</span> ${m.name} ${m.nickname ? `(${m.nickname})` : ''}
-                        </div>
-                        <div class="text-[10px] text-slate-400">ความเชี่ยวชาญ/แผนก: ${m.skill || 'ทั่วไป'}</div>
-                    </div>
-                    <button onclick="deleteMechanic('${m.empId}')" class="text-rose-500 hover:text-rose-700 p-1" title="ลบ">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function handleAddMechanic(e) {
-            e.preventDefault();
-            const empId = document.getElementById('add-tech-emp-id').value.trim();
-            const name = document.getElementById('add-tech-name').value.trim();
-            const nickname = document.getElementById('add-tech-nickname').value.trim();
-            const skill = document.getElementById('add-tech-skill').value.trim();
-
-            if (mechanics.some(m => m.empId === empId)) {
-                alert('รหัสพนักงานนี้มีอยู่ในระบบแล้ว!');
-                return;
-            }
-
-            mechanics.push({
-                empId: empId,
-                name: name,
-                nickname: nickname,
-                skill: skill || 'ทั่วไป'
-            });
-
-            saveData();
-            renderMechanicsList();
-            renderMechanicsOptions();
-            
-            document.getElementById('add-tech-emp-id').value = '';
-            document.getElementById('add-tech-name').value = '';
-            document.getElementById('add-tech-nickname').value = '';
-            document.getElementById('add-tech-skill').value = '';
-            alert('เพิ่มรายชื่อช่างสำเร็จ!');
-        }
-
-        function deleteMechanic(empId) {
-            if (confirm(`ยืนยันลบรายชื่อช่างรหัส ${empId}?`)) {
-                mechanics = mechanics.filter(m => m.empId !== empId);
-                saveData();
-                renderMechanicsList();
-                renderMechanicsOptions();
-            }
-        }
-    </script>
+    // โหลดข้อมูลครั้งแรก
+    renderTechList();
+  </script>
 </body>
 </html>
