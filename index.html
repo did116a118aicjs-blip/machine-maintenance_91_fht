@@ -1,172 +1,98 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ระบบแจ้งซ่อม</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#eceff1;--ink:#1d2b34;--mute:#5d6d77;--line:#c9d1d6;--card:#fff;--tape:#f2c230;--ok:#2e7d4f;--warn:#b35c00;--bad:#b3261e;--info:#1f5f8b}
-@media (prefers-color-scheme:dark){:root{--bg:#161d22;--ink:#e7edf0;--mute:#9aa9b2;--line:#2c3840;--card:#1e282e;--ok:#5fc08a;--warn:#f0a04b;--bad:#f27b73;--info:#6bb2e0}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 'IBM Plex Sans Thai',system-ui,sans-serif}
-.tape{height:14px;background:repeating-linear-gradient(-45deg,var(--tape) 0 16px,#1d2b34 16px 32px)}
-header,main{max-width:760px;margin:0 auto;padding:0 16px}
-header{padding-top:28px}
-h1{font-size:2rem;margin:0 0 4px;letter-spacing:-.01em}
-header p{margin:0;color:var(--mute)}
-nav{display:flex;gap:4px;margin:24px 0 16px;border-bottom:2px solid var(--line)}
-nav button{font:inherit;font-weight:500;background:none;border:0;padding:10px 16px;color:var(--mute);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
-nav button[aria-selected=true]{color:var(--ink);border-color:var(--tape)}
-section{display:none;padding-bottom:48px}section.on{display:block}
-form,.panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:20px}
-label{display:block;font-weight:500;margin:14px 0 4px}label:first-child{margin-top:0}
-input,select,textarea{width:100%;font:inherit;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:10px}
-textarea{min-height:110px;resize:vertical}
-:focus-visible{outline:3px solid var(--info);outline-offset:1px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:560px){.row{grid-template-columns:1fr}}
-.btn{font:inherit;font-weight:700;background:var(--tape);color:#1d2b34;border:0;border-radius:4px;padding:12px 22px;margin-top:18px;cursor:pointer}
-.btn:disabled{opacity:.5;cursor:wait}
-.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line);margin:0}
-.msg{margin-top:14px;padding:10px 12px;border-radius:4px;display:none}
-.msg.ok{display:block;background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
-.msg.err{display:block;background:color-mix(in srgb,var(--bad) 15%,transparent);color:var(--bad)}
-.job{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:4px;padding:12px 16px;margin-bottom:10px}
-.job h3{margin:0;font-size:1rem}.job small{color:var(--mute)}
-.job p{margin:6px 0 0}
-.s-รอดำเนินการ{border-left-color:var(--warn)}.s-กำลังซ่อม{border-left-color:var(--info)}.s-เสร็จแล้ว{border-left-color:var(--ok)}.s-ยกเลิก{border-left-color:var(--mute)}
-.badge{font-size:.85rem;font-weight:500;float:right}
-.job form{border:0;padding:0;background:none;margin-top:10px;display:grid;grid-template-columns:150px 1fr auto;gap:8px}
-.job form .btn{margin:0;padding:8px 16px}
-@media(max-width:560px){.job form{grid-template-columns:1fr}}
-.empty{color:var(--mute);padding:24px 0}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งซ่อม (Local Version)</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 600px; 
+            margin: 30px auto; 
+            padding: 20px; 
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input, button { 
+            padding: 10px; 
+            margin: 8px 0; 
+            width: 100%; 
+            box-sizing: border-box; 
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .card { 
+            border: 1px solid #e0e0e0; 
+            padding: 12px; 
+            margin-top: 10px; 
+            border-radius: 6px; 
+            background: #fafafa;
+        }
+    </style>
 </head>
 <body>
-<div class="tape" aria-hidden="true"></div>
-<header>
-  <h1>ระบบแจ้งซ่อม</h1>
-  <p>แจ้งปัญหาอาคาร อุปกรณ์ หรือระบบต่าง ๆ แล้วติดตามสถานะได้ทันที</p>
-  <nav role="tablist">
-    <button role="tab" data-tab="new" aria-selected="true">แจ้งซ่อม</button>
-    <button role="tab" data-tab="track" aria-selected="false">ติดตามงาน</button>
-    <button role="tab" data-tab="admin" aria-selected="false">สำหรับช่าง</button>
-  </nav>
-</header>
-<main>
-  <section id="new" class="on">
-    <form id="f">
-      <div class="row">
-        <div><label for="name">ชื่อผู้แจ้ง</label><input id="name" required maxlength="80"></div>
-        <div><label for="contact">เบอร์โทร / LINE</label><input id="contact" maxlength="80"></div>
-      </div>
-      <div class="row">
-        <div><label for="place">สถานที่</label><input id="place" required maxlength="120" placeholder="เช่น อาคาร A ชั้น 2 ห้องประชุม"></div>
-        <div><label for="type">ประเภท</label>
-          <select id="type"><option>ไฟฟ้า</option><option>ประปา</option><option>เครื่องปรับอากาศ</option><option>คอมพิวเตอร์/เครือข่าย</option><option>เฟอร์นิเจอร์</option><option>อื่น ๆ</option></select></div>
-      </div>
-      <label for="urgency">ความเร่งด่วน</label>
-      <select id="urgency"><option>ปกติ</option><option>ด่วน</option><option>ด่วนมาก</option></select>
-      <label for="detail">รายละเอียดปัญหา</label>
-      <textarea id="detail" required maxlength="1000"></textarea>
-      <button class="btn" id="send">ส่งแจ้งซ่อม</button>
-      <div class="msg" id="fmsg" role="status"></div>
-    </form>
-  </section>
 
-  <section id="track">
-    <div id="list"><p class="empty">กำลังโหลด…</p></div>
-  </section>
+    <div class="container">
+        <h2>ระบบแจ้งซ่อม (เวอร์ชันทดสอบภายในเครื่อง)</h2>
+        
+        <!-- ฟอร์มกรอกข้อมูล -->
+        <div>
+            <label for="issueText"><strong>รายละเอียดปัญหา:</strong></label>
+            <input type="text" id="issueText" placeholder="ระบุปัญหาที่พบ เช่น แอร์ห้องประชุมไม่เย็น...">
+            <button onclick="addRepairLocally()">บันทึกข้อมูล (จำลอง)</button>
+        </div>
 
-  <section id="admin">
-    <div class="panel">
-      <label for="pass">รหัสช่าง</label>
-      <div class="row"><input id="pass" type="password" autocomplete="current-password"><button class="btn ghost" id="login" type="button">เข้าสู่ระบบ</button></div>
-      <div class="msg" id="amsg" role="status"></div>
+        <h3 style="margin-top: 25px;">รายการแจ้งซ่อมล่าสุด</h3>
+        <div id="repairList">
+            <div class="card">
+                <strong>ปัญหา:</strong> ทดสอบระบบแจ้งซ่อมเบื้องต้น<br>
+                <small>สถานะ: รอดำเนินการ</small>
+            </div>
+        </div>
     </div>
-    <div id="alist" style="margin-top:16px"></div>
-  </section>
-</main>
 
-<script>
-// ▼ วาง URL ของ Web app จาก Apps Script (ลงท้ายด้วย /exec)
-const API = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
-const STATUSES = ['รอดำเนินการ','กำลังซ่อม','เสร็จแล้ว','ยกเลิก'];
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let pass = '';
+    <script>
+        // ฟังก์ชันจำลองการกดส่งข้อมูล (เก็บไว้ดูบนหน้าจอชั่วคราว ยังไม่บันทึกลงฐานข้อมูลใดๆ)
+        function addRepairLocally() {
+            const textInput = document.getElementById('issueText');
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                alert('กรุณากรอกข้อมูลปัญหาก่อนครับ');
+                return;
+            }
 
-document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
-  document.querySelectorAll('nav button').forEach(x => x.setAttribute('aria-selected', x === b));
-  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
-  if (b.dataset.tab === 'track') loadPublic();
-});
+            const listDiv = document.getElementById('repairList');
+            
+            // สร้างการ์ดแสดงผลรายการใหม่ต่อด้านบน
+            const newCard = document.createElement('div');
+            newCard.className = 'card';
+            newCard.innerHTML = `<strong>ปัญหา:</strong> ${text}<br><small>สถานะ: รอดำเนินการ (จำลอง)</small>`;
+            
+            // นำไปแทรกไว้บนสุดของรายการ
+            listDiv.prepend(newCard);
+            
+            // ล้างช่องกรอกข้อความ
+            textInput.value = '';
+            alert('บันทึกข้อมูลจำลองเรียบร้อย!');
+        }
+    </script>
 
-async function get(q){ const r = await fetch(API + '?' + q); return r.json(); }
-async function post(body){
-  // ส่งเป็น text/plain เพื่อเลี่ยง CORS preflight ของ Apps Script
-  const r = await fetch(API, { method:'POST', body: JSON.stringify(body) });
-  return r.json();
-}
-
-$('f').onsubmit = async e => {
-  e.preventDefault();
-  const m = $('fmsg'), btn = $('send');
-  btn.disabled = true; m.className = 'msg';
-  try {
-    const r = await post({ action:'create', name:$('name').value.trim(), contact:$('contact').value.trim(),
-      place:$('place').value.trim(), type:$('type').value, urgency:$('urgency').value, detail:$('detail').value.trim() });
-    if (!r.ok) throw new Error(r.error);
-    m.className = 'msg ok'; m.textContent = 'ส่งแล้ว รหัสงานของคุณคือ ' + r.id + ' (จดไว้เพื่อติดตามสถานะ)';
-    $('f').reset();
-  } catch (err) { m.className = 'msg err'; m.textContent = 'ส่งไม่สำเร็จ: ' + err.message + ' ลองส่งใหม่อีกครั้ง'; }
-  btn.disabled = false;
-};
-
-function card(r, admin){
-  const s = r['สถานะ'];
-  return `<article class="job s-${esc(s)}">
-    <span class="badge">${esc(s)}</span>
-    <h3>${esc(r['รหัส'])} · ${esc(r['ประเภท'])}${r['ความเร่งด่วน']!=='ปกติ' ? ' · '+esc(r['ความเร่งด่วน']) : ''}</h3>
-    <small>${esc(r['สถานที่'])} · แจ้งเมื่อ ${esc(r['วันที่แจ้ง'])}</small>
-    ${admin ? `<p>${esc(r['รายละเอียด'])}</p><small>${esc(r['ผู้แจ้ง'])} ${esc(r['ติดต่อกลับ'])}</small>` : ''}
-    ${r['หมายเหตุช่าง'] ? `<p>หมายเหตุช่าง: ${esc(r['หมายเหตุช่าง'])}</p>` : ''}
-    ${admin ? `<form data-id="${esc(r['รหัส'])}">
-      <select>${STATUSES.map(x => `<option${x===s?' selected':''}>${x}</option>`).join('')}</select>
-      <input placeholder="หมายเหตุ" value="${esc(r['หมายเหตุช่าง'])}" maxlength="500">
-      <button class="btn">บันทึก</button></form>` : ''}
-  </article>`;
-}
-
-async function loadPublic(){
-  try {
-    const r = await get('action=public');
-    if (!r.ok) throw new Error(r.error);
-    $('list').innerHTML = r.rows.length ? r.rows.map(x => card(x,false)).join('') : '<p class="empty">ยังไม่มีงานแจ้งซ่อม</p>';
-  } catch (e) { $('list').innerHTML = '<p class="empty">โหลดข้อมูลไม่ได้ ตรวจสอบ URL ของ Apps Script แล้วรีเฟรชหน้านี้</p>'; }
-}
-
-async function loadAdmin(){
-  const m = $('amsg'); m.className = 'msg';
-  try {
-    const r = await get('action=admin&pass=' + encodeURIComponent(pass));
-    if (!r.ok) throw new Error(r.error);
-    $('alist').innerHTML = r.rows.length ? r.rows.map(x => card(x,true)).join('') : '<p class="empty">ยังไม่มีงานแจ้งซ่อม</p>';
-  } catch (e) { m.className = 'msg err'; m.textContent = e.message; $('alist').innerHTML = ''; }
-}
-
-$('login').onclick = () => { pass = $('pass').value; loadAdmin(); };
-$('alist').addEventListener('submit', async e => {
-  e.preventDefault();
-  const f = e.target, btn = f.querySelector('button'); btn.disabled = true;
-  try {
-    const r = await post({ action:'update', pass, id:f.dataset.id, status:f.querySelector('select').value, note:f.querySelector('input').value });
-    if (!r.ok) throw new Error(r.error);
-    await loadAdmin();
-  } catch (err) { $('amsg').className = 'msg err'; $('amsg').textContent = 'บันทึกไม่สำเร็จ: ' + err.message; btn.disabled = false; }
-});
-</script>
 </body>
 </html>
