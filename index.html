@@ -225,12 +225,36 @@
                     </h3>
                     <form id="machine-form" onsubmit="handleSaveMachine(event)" class="space-y-3">
                         <input type="hidden" id="edit-mc-original-id">
+                        
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="add-mc-code" required placeholder="รหัสเครื่อง (เช่น L188)" class="p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <input type="text" id="add-mc-name" required placeholder="ชื่อเครื่องจักร" class="p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">รหัสเครื่องจักร</label>
+                                <input type="text" id="add-mc-code" required placeholder="เช่น L188" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">ชื่อเครื่องจักร</label>
+                                <input type="text" id="add-mc-name" required placeholder="เช่น จักรลา" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
                         </div>
-                        <input type="text" id="add-mc-location" placeholder="ตำแหน่งติดตั้ง / Line ผลิต (เช่น ทีม81)" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        <div class="flex gap-2">
+
+                        <!-- แยกตำแหน่งที่ตั้งและไลน์ผลิต -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">ตำแหน่งที่ตั้ง</label>
+                                <select id="add-mc-location" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="ชั้น 1">ชั้น 1</option>
+                                    <option value="ชั้น 2">ชั้น 2</option>
+                                    <option value="ชั้น 3">ชั้น 3</option>
+                                    <option value="ชั้น 4">ชั้น 4</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">ไลน์ผลิต</label>
+                                <input type="text" id="add-mc-line" placeholder="เช่น ทีม81 หรือ Line 2" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-1">
                             <button type="submit" id="mc-submit-btn" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl">
                                 <i class="fa-solid fa-plus mr-1"></i> เพิ่มเครื่องจักร
                             </button>
@@ -332,8 +356,8 @@
         let currentFilterStatus = 'ทั้งหมด';
 
         let machines = JSON.parse(localStorage.getItem('app_machines')) || [
-            { id: 'L188', name: 'จักรลา', location: 'ทีม81' },
-            { id: 'MC-002', name: 'เตาอบไมโครเวฟ StarLam', location: 'Line 2' }
+            { id: 'L188', name: 'จักรลา', location: 'ชั้น 1', line: 'ทีม81' },
+            { id: 'MC-002', name: 'เตาอบไมโครเวฟ StarLam', location: 'ชั้น 2', line: 'Line 2' }
         ];
 
         let mechanics = JSON.parse(localStorage.getItem('app_mechanics')) || [
@@ -447,7 +471,7 @@
         }
 
         function createOrderCardHTML(o) {
-            const mc = machines.find(m => m.id === o.machineId) || { name: 'เครื่องจักรทั่วไป', location: '-' };
+            const mc = machines.find(m => m.id === o.machineId) || { name: 'เครื่องจักรทั่วไป', location: '-', line: '-' };
             const statusStr = (o.status || '').trim();
             
             let statusBadge = '<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รอรับเรื่อง</span>';
@@ -471,7 +495,9 @@
                         <div>
                             <span class="text-xs font-bold text-slate-400">${o.id}</span>
                             <h3 class="font-bold text-slate-800 text-sm">${mc.name} (${o.machineId})</h3>
-                            <p class="text-[11px] text-slate-500"><i class="fa-solid fa-location-dot"></i> ${mc.location}</p>
+                            <p class="text-[11px] text-slate-500">
+                                <i class="fa-solid fa-location-dot"></i> ${mc.location || '-'} | <i class="fa-solid fa-industry"></i> ${mc.line || '-'}
+                            </p>
                         </div>
                         <div class="flex flex-col items-end gap-1">
                             ${statusBadge}
@@ -614,7 +640,7 @@
         function renderMachineOptions() {
             const select = document.getElementById('form-machine-id');
             select.innerHTML = '<option value="">-- เลือกเครื่องจักร --</option>' + 
-                machines.map(m => `<option value="${m.id}">${m.id} - ${m.name} (${m.location})</option>`).join('');
+                machines.map(m => `<option value="${m.id}">${m.id} - ${m.name} [${m.location || '-'} / ${m.line || '-'}]</option>`).join('');
         }
 
         function renderMechanicsOptions() {
@@ -633,7 +659,9 @@
                 <div class="py-2.5 flex justify-between items-center text-xs">
                     <div>
                         <div class="font-bold text-brand-700">${m.id} - ${m.name}</div>
-                        <div class="text-[10px] text-slate-400">ตำแหน่ง: ${m.location || '-'}</div>
+                        <div class="text-[10px] text-slate-400">
+                            ที่ตั้ง: <span class="font-medium text-slate-600">${m.location || '-'}</span> | ไลน์ผลิต: <span class="font-medium text-slate-600">${m.line || '-'}</span>
+                        </div>
                     </div>
                     <div class="flex items-center gap-1">
                         <button onclick="editMachine('${m.id}')" class="text-amber-600 hover:text-amber-800 p-1 font-medium text-[11px]" title="แก้ไข">
@@ -652,22 +680,21 @@
             const originalId = document.getElementById('edit-mc-original-id').value;
             const id = document.getElementById('add-mc-code').value.trim();
             const name = document.getElementById('add-mc-name').value.trim();
-            const location = document.getElementById('add-mc-location').value.trim();
+            const location = document.getElementById('add-mc-location').value;
+            const line = document.getElementById('add-mc-line').value.trim();
 
             if (originalId) {
-                // แก้ไขข้อมูลเดิม
                 const index = machines.findIndex(m => m.id === originalId);
                 if (index !== -1) {
-                    machines[index] = { id, name, location };
+                    machines[index] = { id, name, location, line };
                     alert('แก้ไขข้อมูลเครื่องจักรเรียบร้อยแล้ว!');
                 }
             } else {
-                // เพิ่มเครื่องจักรใหม่
                 if (machines.some(m => m.id === id)) {
                     alert('รหัสเครื่องจักรนี้มีในระบบแล้ว!');
                     return;
                 }
-                machines.push({ id, name, location });
+                machines.push({ id, name, location, line });
                 alert('เพิ่มเครื่องจักรสำเร็จ!');
             }
 
@@ -686,7 +713,8 @@
             document.getElementById('edit-mc-original-id').value = mc.id;
             document.getElementById('add-mc-code').value = mc.id;
             document.getElementById('add-mc-name').value = mc.name;
-            document.getElementById('add-mc-location').value = mc.location || '';
+            document.getElementById('add-mc-location').value = mc.location || 'ชั้น 1';
+            document.getElementById('add-mc-line').value = mc.line || '';
 
             document.getElementById('mc-form-title').innerText = 'แก้ไขข้อมูลเครื่องจักร';
             document.getElementById('mc-submit-btn').innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการแก้ไข';
