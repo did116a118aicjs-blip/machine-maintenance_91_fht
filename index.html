@@ -287,9 +287,12 @@
                     </select>
                 </div>
 
-                <div class="pt-3">
+                <div class="pt-3 space-y-2">
                     <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md">
                         <i class="fa-solid fa-check-circle mr-1"></i> บันทึกผลการซ่อมส่งงาน
+                    </button>
+                    <button type="button" onclick="deleteWorkOrderFromModal()" class="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-medium text-xs rounded-xl border border-rose-200">
+                        <i class="fa-solid fa-trash-can mr-1"></i> ลบรายการแจ้งซ่อมนี้
                     </button>
                 </div>
             </form>
@@ -468,8 +471,8 @@
                 : '<span class="text-slate-500 bg-slate-100 text-[10px] font-semibold px-2 py-0.5 rounded-md">ปกติ</span>';
 
             return `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2">
-                    <div class="flex justify-between items-start">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2 relative">
+                    <div class="flex justify-between items-start pr-6">
                         <div>
                             <span class="text-xs font-bold text-slate-400">${o.id}</span>
                             <h3 class="font-bold text-slate-800 text-sm">${mc.name} (${o.machineId})</h3>
@@ -480,6 +483,11 @@
                             ${urgencyBadge}
                         </div>
                     </div>
+
+                    <!-- Delete Button Icon -->
+                    <button onclick="deleteWorkOrder('${o.id}')" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 p-1 transition-colors" title="ลบงานซ่อม">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
 
                     <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-slate-700">
                         <span class="font-semibold text-slate-800">อาการ:</span> ${o.symptom}
@@ -530,6 +538,24 @@
             renderOrdersList(workOrders);
             alert('ส่งข้อมูลแจ้งซ่อมเรียบร้อยแล้ว!');
             switchTab('dashboard');
+        }
+
+        // Delete Work Order Logic
+        function deleteWorkOrder(orderId) {
+            if (confirm(`คุณต้องการลบรายการแจ้งซ่อมรหัส ${orderId} ใช่หรือไม่?`)) {
+                workOrders = workOrders.filter(o => o.id !== orderId);
+                saveData();
+                renderDashboard();
+                renderOrdersList(workOrders);
+            }
+        }
+
+        function deleteWorkOrderFromModal() {
+            const orderId = document.getElementById('modal-order-id').value;
+            if (orderId) {
+                deleteWorkOrder(orderId);
+                closeModal();
+            }
         }
 
         // Modal Action Handlers
