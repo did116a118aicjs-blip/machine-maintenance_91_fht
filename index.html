@@ -227,7 +227,7 @@
 
     <!-- Script Application Logic -->
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxumSoKueGATXkwlc5926wEUB0fNxDcWa-rFEJfO3w/dev'; // เปลี่ยนเป็น URL ของคุณ
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbybnMIxyi-2i80WkwsHyJRP6kG_pnG6yI33r6pNXUOS8C77s1PHOZYKwK0lXM3QQ2g/exec';
 
         let currentFilterStatus = 'ทั้งหมด';
         let machines = JSON.parse(localStorage.getItem('app_machines')) || [];
@@ -236,11 +236,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             renderAll();
-            fetchDataFromSheet(); // โหลดข้อมูลสดแบบเบื้องหลังทันที
+            fetchDataFromSheet();
         });
 
         async function fetchDataFromSheet() {
-            if (WEB_APP_URL.includes('YOUR_GOOGLE')) return;
             try {
                 const res = await fetch(`${WEB_APP_URL}?action=getData`);
                 const data = await res.json();
@@ -266,7 +265,6 @@
                     headers: { 'Content-Type': 'text/plain' },
                     body: JSON.stringify({ action, payload })
                 });
-                // รอสักครู่แล้วดึงข้อมูลล่าสุดกลับมา
                 setTimeout(async () => {
                     await fetchDataFromSheet();
                     document.getElementById('sync-loading').classList.add('hidden');
@@ -411,59 +409,71 @@
             const id = document.getElementById('modal-order-id').value;
             const o = workOrders.find(x => String(x.id) === String(id));
             if (!o) return;
+
             o.mechanic = document.getElementById('modal-mechanic-select').value;
             o.solution = document.getElementById('modal-solution').value;
-            o.parts = document.getElementById('modal-parts').value;
+            o.parts = document.getElementById('modal-parts').value || '-';
             o.cost = parseFloat(document.getElementById('modal-cost').value) || 0;
             o.status = document.getElementById('modal-status').value;
 
             localStorage.setItem('app_orders', JSON.stringify(workOrders));
-            closeModal(); renderDashboard(); renderOrdersList();
+            closeModal();
+            renderDashboard();
+            renderOrdersList();
             callSheetAPI('updateOrder', o);
         }
 
         function deleteWorkOrder() {
+            if (!confirm('คุณต้องการลบรายการแจ้งซ่อมนี้ใช่หรือไม่?')) return;
             const id = document.getElementById('modal-order-id').value;
-            if (confirm('ต้องการลบรายการนี้?')) {
-                workOrders = workOrders.filter(x => String(x.id) !== String(id));
-                localStorage.setItem('app_orders', JSON.stringify(workOrders));
-                closeModal(); renderDashboard(); renderOrdersList();
-                callSheetAPI('deleteOrder', { id });
-            }
-        }
-
-        function handleAddMechanic(e) {
-            e.preventDefault();
-            const m = { empId: document.getElementById('add-tech-emp-id').value, nickname: document.getElementById('add-tech-nickname').value, skill: document.getElementById('add-tech-skill').value };
-            mechanics.push(m);
-            localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
-            renderMechanicsList(); renderMechanicsOptions(); e.target.reset();
-            callSheetAPI('saveMechanic', m);
-        }
-        function deleteMechanic(empId) {
-            if (confirm('ลบช่างคนนี้?')) {
-                mechanics = mechanics.filter(x => x.empId !== empId);
-                localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
-                renderMechanicsList(); renderMechanicsOptions();
-                callSheetAPI('deleteMechanic', { empId });
-            }
+            workOrders = workOrders.filter(x => String(x.id) !== String(id));
+            localStorage.setItem('app_orders', JSON.stringify(workOrders));
+            closeModal();
+            renderDashboard();
+            renderOrdersList();
         }
 
         function handleAddMachine(e) {
             e.preventDefault();
-            const m = { id: document.getElementById('add-mc-code').value, name: document.getElementById('add-mc-name').value, location: document.getElementById('add-mc-location').value, line: document.getElementById('add-mc-line').value };
-            machines.push(m);
+            const newMc = {
+                id: document.getElementById('add-mc-code').value.trim(),
+                name: document.getElementById('add-mc-name').value.trim(),
+                location: document.getElementById('add-mc-location').value.trim(),
+                line: document.getElementById('add-mc-line').value.trim()
+            };
+            machines.push(newMc);
             localStorage.setItem('app_machines', JSON.stringify(machines));
-            renderMachinesList(); renderMachineOptions(); e.target.reset();
-            callSheetAPI('saveMachine', m);
+            renderAll();
+            e.target.reset();
+            callSheetAPI('saveMachine', newMc);
         }
+
         function deleteMachine(id) {
-            if (confirm('ลบเครื่องจักรนี้?')) {
-                machines = machines.filter(x => x.id !== id);
-                localStorage.setItem('app_machines', JSON.stringify(machines));
-                renderMachinesList(); renderMachineOptions();
-                callSheetAPI('deleteMachine', { id });
-            }
+            if (!confirm('ต้องการลบเครื่องจักรนี้ใช่หรือไม่?')) return;
+            machines = machines.filter(m => String(m.id) !== String(id));
+            localStorage.setItem('app_machines', JSON.stringify(machines));
+            renderAll();
+        }
+
+        function handleAddMechanic(e) {
+            e.preventDefault();
+            const newMech = {
+                empId: document.getElementById('add-tech-emp-id').value.trim(),
+                nickname: document.getElementById('add-tech-nickname').value.trim(),
+                skill: document.getElementById('add-tech-skill').value.trim()
+            };
+            mechanics.push(newMech);
+            localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
+            renderAll();
+            e.target.reset();
+            callSheetAPI('saveMechanic', newMech);
+        }
+
+        function deleteMechanic(empId) {
+            if (!confirm('ต้องการลบข้อมูลช่างนี้ใช่หรือไม่?')) return;
+            mechanics = mechanics.filter(m => String(m.empId) !== String(empId));
+            localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
+            renderAll();
         }
     </script>
 </body>
