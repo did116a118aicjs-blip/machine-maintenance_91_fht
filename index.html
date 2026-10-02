@@ -61,26 +61,49 @@
 
         <!-- TAB 1: DASHBOARD / OVERVIEW -->
         <section id="tab-dashboard" class="space-y-4">
-            <!-- Summary Stats -->
+            <!-- Summary Stats (4 Cards matching layout) -->
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">รอดำเนินการ</span>
-                        <i class="fa-solid fa-clock-rotate-left text-amber-500 text-lg"></i>
+                <!-- 1. รอรับเรื่อง -->
+                <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-xl flex-shrink-0">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
-                    <div class="mt-2">
-                        <span id="stat-pending" class="text-2xl font-bold text-slate-800">0</span>
-                        <span class="text-xs text-slate-500"> รายการ</span>
+                    <div>
+                        <div id="stat-pending" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs font-medium text-slate-500 mt-1">รอรับเรื่อง</div>
                     </div>
                 </div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">ซ่อมเสร็จแล้ว</span>
-                        <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+
+                <!-- 2. กำลังซ่อม -->
+                <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-xl flex-shrink-0">
+                        <i class="fa-solid fa-wrench"></i>
                     </div>
-                    <div class="mt-2">
-                        <span id="stat-completed" class="text-2xl font-bold text-slate-800">0</span>
-                        <span class="text-xs text-slate-500"> รายการ</span>
+                    <div>
+                        <div id="stat-repairing" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs font-medium text-slate-500 mt-1">กำลังซ่อม</div>
+                    </div>
+                </div>
+
+                <!-- 3. รออะไหล่ -->
+                <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-xl flex-shrink-0">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <div>
+                        <div id="stat-waiting-parts" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs font-medium text-slate-500 mt-1">รออะไหล่</div>
+                    </div>
+                </div>
+
+                <!-- 4. ซ่อมเสร็จสิ้น -->
+                <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 text-xl flex-shrink-0">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div>
+                        <div id="stat-completed" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs font-medium text-slate-500 mt-1">ซ่อมเสร็จสิ้น</div>
                     </div>
                 </div>
             </div>
@@ -166,9 +189,10 @@
             <!-- Filter Bar -->
             <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
                 <button onclick="filterOrders('ทั้งหมด')" class="filter-btn bg-brand-600 text-white px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ทั้งหมด</button>
-                <button onclick="filterOrders('รอดำเนินการ')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รอดำเนินการ</button>
+                <button onclick="filterOrders('รอรับเรื่อง')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รอรับเรื่อง</button>
                 <button onclick="filterOrders('กำลังซ่อม')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">กำลังซ่อม</button>
-                <button onclick="filterOrders('เสร็จสิ้น')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ซ่อมเสร็จแล้ว</button>
+                <button onclick="filterOrders('รออะไหล่')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รออะไหล่</button>
+                <button onclick="filterOrders('ซ่อมเสร็จสิ้น')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ซ่อมเสร็จสิ้น</button>
             </div>
 
             <!-- Orders Container -->
@@ -282,8 +306,10 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">สถานะงานซ่อม</label>
                     <select id="modal-status" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="รอรับเรื่อง">รอรับเรื่อง</option>
                         <option value="กำลังซ่อม">กำลังซ่อม (In Progress)</option>
-                        <option value="เสร็จสิ้น">ซ่อมเสร็จสมบูรณ์ (Completed)</option>
+                        <option value="รออะไหล่">รออะไหล่ (Waiting Parts)</option>
+                        <option value="ซ่อมเสร็จสิ้น">ซ่อมเสร็จสิ้น (Completed)</option>
                     </select>
                 </div>
 
@@ -348,6 +374,32 @@
                 parts: '-',
                 cost: 0,
                 createdAt: '2026-10-02 09:30'
+            },
+            {
+                id: 'WO-20261002',
+                machineId: 'MC-001',
+                symptom: 'ลูกปืนสายพานมีเสียงดังผิดปกติ',
+                urgency: 'ด่วน',
+                reporter: 'วิชัย',
+                status: 'รออะไหล่',
+                mechanic: 'ช่างวิชัย (ระบบกลไก)',
+                solution: 'สั่งซื้อลูกปืนตลับใหม่',
+                parts: 'Bearing #6204',
+                cost: 450,
+                createdAt: '2026-10-02 10:15'
+            },
+            {
+                id: 'WO-20261003',
+                machineId: 'MC-003',
+                symptom: 'สายพานตึงเกินไป',
+                urgency: 'ปกติ',
+                reporter: 'อนันต์',
+                status: 'ซ่อมเสร็จสิ้น',
+                mechanic: 'ช่างวิชัย (ระบบกลไก)',
+                solution: 'ปรับตั้งความตึงสายพานใหม่',
+                parts: '-',
+                cost: 0,
+                createdAt: '2026-10-02 11:00'
             }
         ];
 
@@ -418,13 +470,17 @@
                 mechanics.map(m => `<option value="${m.name}">${m.name} [${m.skill}]</option>`).join('');
         }
 
-        // Render Dashboard Stats & Orders
+        // Render Dashboard Stats (4 statuses) & Orders
         function renderDashboard() {
-            const pending = workOrders.filter(o => o.status !== 'เสร็จสิ้น').length;
-            const completed = workOrders.filter(o => o.status === 'เสร็จสิ้น').length;
+            const pendingCount = workOrders.filter(o => o.status === 'รอรับเรื่อง' || o.status === 'รอดำเนินการ').length;
+            const repairingCount = workOrders.filter(o => o.status === 'กำลังซ่อม').length;
+            const waitingPartsCount = workOrders.filter(o => o.status === 'รออะไหล่').length;
+            const completedCount = workOrders.filter(o => o.status === 'ซ่อมเสร็จสิ้น' || o.status === 'เสร็จสิ้น').length;
 
-            document.getElementById('stat-pending').innerText = pending;
-            document.getElementById('stat-completed').innerText = completed;
+            document.getElementById('stat-pending').innerText = pendingCount;
+            document.getElementById('stat-repairing').innerText = repairingCount;
+            document.getElementById('stat-waiting-parts').innerText = waitingPartsCount;
+            document.getElementById('stat-completed').innerText = completedCount;
 
             const recentOrders = [...workOrders].reverse().slice(0, 3);
             const container = document.getElementById('dashboard-orders-list');
@@ -458,11 +514,15 @@
         // Generate Work Order Card HTML
         function createOrderCardHTML(o) {
             const mc = machines.find(m => m.id === o.machineId) || { name: 'เครื่องจักรทั่วไป', location: '-' };
-            const statusBadge = o.status === 'เสร็จสิ้น' 
-                ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">เสร็จสิ้น</span>'
-                : o.status === 'กำลังซ่อม' 
-                ? '<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">กำลังซ่อม</span>'
-                : '<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รอดำเนินการ</span>';
+            
+            let statusBadge = '<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รอรับเรื่อง</span>';
+            if (o.status === 'กำลังซ่อม') {
+                statusBadge = '<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">กำลังซ่อม</span>';
+            } else if (o.status === 'รออะไหล่') {
+                statusBadge = '<span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รออะไหล่</span>';
+            } else if (o.status === 'ซ่อมเสร็จสิ้น' || o.status === 'เสร็จสิ้น') {
+                statusBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">ซ่อมเสร็จสิ้น</span>';
+            }
 
             const urgencyBadge = o.urgency === 'ด่วนที่สุด' 
                 ? '<span class="text-rose-600 bg-rose-50 border border-rose-200 text-[10px] font-semibold px-2 py-0.5 rounded-md">ด่วนที่สุด</span>'
@@ -502,7 +562,7 @@
                     <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1 border-t">
                         <span>ผู้แจ้ง: ${o.reporter} | ${o.createdAt}</span>
                         <button onclick="openActionModal('${o.id}')" class="text-xs font-semibold text-brand-600 hover:text-brand-800 bg-brand-50 px-2.5 py-1 rounded-lg">
-                            <i class="fa-solid fa-wrench"></i> ${o.status === 'เสร็จสิ้น' ? 'ดู/แก้ไข' : 'จัดการงาน'}
+                            <i class="fa-solid fa-wrench"></i> ${o.status === 'ซ่อมเสร็จสิ้น' || o.status === 'เสร็จสิ้น' ? 'ดู/แก้ไข' : 'จัดการงาน'}
                         </button>
                     </div>
                 </div>
@@ -522,7 +582,7 @@
                 urgency: document.getElementById('form-urgency').value,
                 reporter: document.getElementById('form-reporter').value,
                 symptom: document.getElementById('form-symptom').value,
-                status: 'รอดำเนินการ',
+                status: 'รอรับเรื่อง',
                 mechanic: '-',
                 solution: '',
                 parts: '-',
@@ -568,7 +628,7 @@
             document.getElementById('modal-solution').value = order.solution || '';
             document.getElementById('modal-parts').value = order.parts !== '-' ? order.parts : '';
             document.getElementById('modal-cost').value = order.cost || '';
-            document.getElementById('modal-status').value = order.status === 'เสร็จสิ้น' ? 'เสร็จสิ้น' : 'กำลังซ่อม';
+            document.getElementById('modal-status').value = order.status;
             
             if (order.mechanic && order.mechanic !== '-') {
                 document.getElementById('modal-mechanic-select').value = order.mechanic;
