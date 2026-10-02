@@ -231,7 +231,12 @@
                 </div>
 
                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">รายชื่อช่างในระบบ</h3>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">รายชื่อช่างในระบบ</h3>
+                        <button onclick="clearAllMechanics()" class="text-[10px] text-rose-500 hover:text-rose-700 underline font-medium">
+                            <i class="fa-solid fa-rotate-left mr-1"></i>ล้างรายชื่อช่างทั้งหมด
+                        </button>
+                    </div>
                     <div id="mechanics-list" class="divide-y divide-slate-100"></div>
                 </div>
             </div>
@@ -391,7 +396,7 @@
                 symptom: 'จักรมีเสียงดัง',
                 urgency: 'ปกติ',
                 reporterEmpId: 'E101',
-                reporterNickname: 'did',
+                reporterNickname: 'พงษ์',
                 status: 'รอรับเรื่อง',
                 mechanic: '-',
                 solution: '',
@@ -401,6 +406,18 @@
             }
         ];
 
+        // เคลียร์/ปรับโครงสร้างข้อมูลช่างรุ่นเก่าอัตโนมัติ
+        mechanics = mechanics.map(m => {
+            if (!m.nickname && m.name) {
+                return {
+                    empId: m.empId || 'TECH-01',
+                    nickname: m.name.replace('ช่าง', '').split(' ')[0],
+                    skill: m.skill || 'ทั่วไป'
+                };
+            }
+            return m;
+        });
+
         function saveData() {
             localStorage.setItem('app_machines', JSON.stringify(machines));
             localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
@@ -408,6 +425,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            saveData();
             renderMachineOptions();
             renderMechanicsOptions();
             renderDashboard();
@@ -509,8 +527,7 @@
                 ? '<span class="text-amber-600 bg-amber-50 border border-amber-200 text-[10px] font-semibold px-2 py-0.5 rounded-md">ด่วน</span>'
                 : '<span class="text-slate-500 bg-slate-100 text-[10px] font-semibold px-2 py-0.5 rounded-md">ปกติ</span>';
 
-            // แสดงเฉพาะ รหัสพนักงาน และ ชื่อเล่น ของผู้แจ้ง
-            let reporterText = o.reporterNickname || o.reporter || '-';
+            let reporterText = o.reporterNickname || o.reporterName || o.reporter || '-';
             if (o.reporterEmpId) reporterText = `[${o.reporterEmpId}] ` + reporterText;
 
             return `
@@ -673,7 +690,7 @@
             select.innerHTML = '<option value="">-- เลือกช่างผู้รับผิดชอบ --</option>' + 
                 mechanics.map(m => {
                     const empCode = m.empId ? `[${m.empId}] ` : '';
-                    const nick = m.nickname || 'ช่าง';
+                    const nick = m.nickname || m.name || 'ช่าง';
                     const display = `${empCode}ช่าง${nick} [${m.skill || 'ทั่วไป'}]`;
                     return `<option value="${display}">${display}</option>`;
                 }).join('');
@@ -777,15 +794,15 @@
                 container.innerHTML = `<div class="text-center py-4 text-xs text-slate-400">ยังไม่มีรายชื่อช่าง</div>`;
                 return;
             }
-            container.innerHTML = mechanics.map(m => `
+            container.innerHTML = mechanics.map((m, index) => `
                 <div class="py-2.5 flex justify-between items-center text-xs">
                     <div>
                         <div class="font-semibold text-slate-800">
-                            <span class="text-brand-600 font-bold">[${m.empId || 'ไม่ระบุ'}]</span> ช่าง${m.nickname || '-'}
+                            <span class="text-brand-600 font-bold">[${m.empId || 'ไม่ระบุ'}]</span> ช่าง${m.nickname || m.name || '-'}
                         </div>
                         <div class="text-[10px] text-slate-400">ความเชี่ยวชาญ/แผนก: ${m.skill || 'ทั่วไป'}</div>
                     </div>
-                    <button onclick="deleteMechanic('${m.empId}')" class="text-rose-500 hover:text-rose-700 p-1" title="ลบ">
+                    <button onclick="deleteMechanicByIndex(${index})" class="text-rose-500 hover:text-rose-700 p-1" title="ลบ">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
@@ -819,9 +836,22 @@
             alert('เพิ่มรายชื่อช่างสำเร็จ!');
         }
 
-        function deleteMechanic(empId) {
-            if (confirm(`ยืนยันลบรายชื่อช่างรหัส ${empId}?`)) {
-                mechanics = mechanics.filter(m => m.empId !== empId);
+        // ฟังก์ชันลบช่างตามลำดับ Index (ลบช่างเก่าที่ไม่มีรหัสพนักงานได้แน่นอน)
+        function deleteMechanicByIndex(index) {
+            const m = mechanics[index];
+            const displayName = m ? (m.nickname || m.name || 'ช่างท่านนี้') : 'ช่างท่านนี้';
+            if (confirm(`ยืนยันลบรายชื่อ ${displayName}?`)) {
+                mechanics.splice(index, 1);
+                saveData();
+                renderMechanicsList();
+                renderMechanicsOptions();
+            }
+        }
+
+        // ปุ่มล้างรายชื่อช่างทั้งหมดสำหรับรีเซ็ตข้อมูลเก่า
+        function clearAllMechanics() {
+            if (confirm('คุณต้องการลบรายชื่อช่างทั้งหมดในระบบเพื่อเริ่มบันทึกใหม่ใช่หรือไม่?')) {
+                mechanics = [];
                 saveData();
                 renderMechanicsList();
                 renderMechanicsOptions();
