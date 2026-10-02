@@ -237,16 +237,17 @@
                             </div>
                         </div>
 
-                        <!-- แยกตำแหน่งที่ตั้งและไลน์ผลิต -->
+                        <!-- ปรับตำแหน่งที่ตั้งเป็น Input + Datalist ให้พิมพ์อิสระหรือเลือกคำแนะนำได้ -->
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">ตำแหน่งที่ตั้ง</label>
-                                <select id="add-mc-location" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                    <option value="ชั้น 1">ชั้น 1</option>
-                                    <option value="ชั้น 2">ชั้น 2</option>
-                                    <option value="ชั้น 3">ชั้น 3</option>
-                                    <option value="ชั้น 4">ชั้น 4</option>
-                                </select>
+                                <input type="text" id="add-mc-location" list="location-suggestions" placeholder="เช่น ชั้น 1" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <datalist id="location-suggestions">
+                                    <option value="ชั้น 1"></option>
+                                    <option value="ชั้น 2"></option>
+                                    <option value="ชั้น 3"></option>
+                                    <option value="ชั้น 4"></option>
+                                </datalist>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">ไลน์ผลิต</label>
@@ -680,7 +681,7 @@
             const originalId = document.getElementById('edit-mc-original-id').value;
             const id = document.getElementById('add-mc-code').value.trim();
             const name = document.getElementById('add-mc-name').value.trim();
-            const location = document.getElementById('add-mc-location').value;
+            const location = document.getElementById('add-mc-location').value.trim();
             const line = document.getElementById('add-mc-line').value.trim();
 
             if (originalId) {
@@ -713,7 +714,7 @@
             document.getElementById('edit-mc-original-id').value = mc.id;
             document.getElementById('add-mc-code').value = mc.id;
             document.getElementById('add-mc-name').value = mc.name;
-            document.getElementById('add-mc-location').value = mc.location || 'ชั้น 1';
+            document.getElementById('add-mc-location').value = mc.location || '';
             document.getElementById('add-mc-line').value = mc.line || '';
 
             document.getElementById('mc-form-title').innerText = 'แก้ไขข้อมูลเครื่องจักร';
