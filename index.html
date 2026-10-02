@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,112 +36,128 @@
             font-family: 'Prompt', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        .pb-safe {
-            padding-bottom: env(safe-area-inset-bottom, 80px);
-        }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-safe">
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-20 md:pb-8">
 
     <!-- Header Navigation -->
     <header class="bg-brand-700 text-white sticky top-0 z-30 shadow-md">
-        <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
                 <i class="fa-solid fa-gears text-2xl text-amber-400"></i>
-                <h1 class="text-lg font-bold leading-tight">ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</h1>
+                <h1 class="text-base sm:text-lg md:text-xl font-bold leading-tight">ระบบแจ้งซ่อมและส่งงานเครื่องจักร-91</h1>
             </div>
-            <button onclick="switchTab('settings')" class="p-2 text-slate-200 hover:text-white relative" title="จัดการข้อมูล">
+            
+            <!-- Desktop Top Menu Navigation -->
+            <nav class="hidden md:flex items-center space-x-2">
+                <button onclick="switchTab('dashboard')" id="top-nav-dashboard" class="top-nav-item px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all bg-brand-800 text-white">
+                    <i class="fa-solid fa-chart-pie"></i> หน้าหลัก
+                </button>
+                <button onclick="switchTab('create')" id="top-nav-create" class="top-nav-item px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all text-slate-200 hover:bg-brand-600">
+                    <i class="fa-solid fa-circle-plus"></i> แจ้งซ่อม
+                </button>
+                <button onclick="switchTab('orders')" id="top-nav-orders" class="top-nav-item px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all text-slate-200 hover:bg-brand-600">
+                    <i class="fa-solid fa-rectangle-list"></i> งานซ่อม
+                </button>
+                <button onclick="switchTab('settings')" id="top-nav-settings" class="top-nav-item px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all text-slate-200 hover:bg-brand-600">
+                    <i class="fa-solid fa-sliders"></i> ตั้งค่า/ข้อมูล
+                </button>
+            </nav>
+
+            <button onclick="switchTab('settings')" class="md:hidden p-2 text-slate-200 hover:text-white" title="จัดการข้อมูล">
                 <i class="fa-solid fa-sliders text-xl"></i>
             </button>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 py-4">
+    <!-- Main Container (ขยายกว้างในจอ PC) -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
 
         <!-- TAB 1: DASHBOARD / OVERVIEW -->
-        <section id="tab-dashboard" class="space-y-4">
-            <!-- Summary Stats -->
-            <div class="grid grid-cols-2 gap-3">
-                <div onclick="filterAndNavigate('รอรับเรื่อง')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-amber-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-xl flex-shrink-0">
+        <section id="tab-dashboard" class="space-y-6">
+            <!-- Summary Stats (2 ช่องใน Mobile / 4 ช่องใน PC) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div onclick="filterAndNavigate('รอรับเรื่อง')" class="bg-white p-4.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 cursor-pointer hover:border-amber-300 active:scale-95 transition-all">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 text-xl md:text-2xl flex-shrink-0">
                         <i class="fa-solid fa-clock-rotate-left"></i>
                     </div>
                     <div>
-                        <div id="stat-pending" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">รอรับเรื่อง</div>
+                        <div id="stat-pending" class="text-2xl md:text-3xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs md:text-sm font-medium text-slate-500 mt-1">รอรับเรื่อง</div>
                     </div>
                 </div>
 
-                <div onclick="filterAndNavigate('กำลังซ่อม')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-blue-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-xl flex-shrink-0">
+                <div onclick="filterAndNavigate('กำลังซ่อม')" class="bg-white p-4.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 cursor-pointer hover:border-blue-300 active:scale-95 transition-all">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 text-xl md:text-2xl flex-shrink-0">
                         <i class="fa-solid fa-wrench"></i>
                     </div>
                     <div>
-                        <div id="stat-repairing" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">กำลังซ่อม</div>
+                        <div id="stat-repairing" class="text-2xl md:text-3xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs md:text-sm font-medium text-slate-500 mt-1">กำลังซ่อม</div>
                     </div>
                 </div>
 
-                <div onclick="filterAndNavigate('รออะไหล่')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-purple-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-xl flex-shrink-0">
+                <div onclick="filterAndNavigate('รออะไหล่')" class="bg-white p-4.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 cursor-pointer hover:border-purple-300 active:scale-95 transition-all">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600 text-xl md:text-2xl flex-shrink-0">
                         <i class="fa-solid fa-boxes-packing"></i>
                     </div>
                     <div>
-                        <div id="stat-waiting-parts" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">รออะไหล่</div>
+                        <div id="stat-waiting-parts" class="text-2xl md:text-3xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs md:text-sm font-medium text-slate-500 mt-1">รออะไหล่</div>
                     </div>
                 </div>
 
-                <div onclick="filterAndNavigate('ซ่อมเสร็จสิ้น')" class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-3 cursor-pointer hover:border-emerald-300 active:scale-95 transition-all">
-                    <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 text-xl flex-shrink-0">
+                <div onclick="filterAndNavigate('ซ่อมเสร็จสิ้น')" class="bg-white p-4.5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4 cursor-pointer hover:border-emerald-300 active:scale-95 transition-all">
+                    <div class="w-12 h-12 md:w-14 md:h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 text-xl md:text-2xl flex-shrink-0">
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                     <div>
-                        <div id="stat-completed" class="text-xl font-extrabold text-slate-800 leading-none">0</div>
-                        <div class="text-xs font-medium text-slate-500 mt-1">ซ่อมเสร็จสิ้น</div>
+                        <div id="stat-completed" class="text-2xl md:text-3xl font-extrabold text-slate-800 leading-none">0</div>
+                        <div class="text-xs md:text-sm font-medium text-slate-500 mt-1">ซ่อมเสร็จสิ้น</div>
                     </div>
                 </div>
             </div>
 
-            <button onclick="switchTab('create')" class="w-full bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white p-4 rounded-2xl shadow-lg flex items-center justify-between transition-all">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-xl">
+            <!-- Quick Action Button -->
+            <button onclick="switchTab('create')" class="w-full bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-700 hover:to-brand-800 text-white p-4 md:p-5 rounded-2xl shadow-lg flex items-center justify-between transition-all">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl">
                         <i class="fa-solid fa-plus"></i>
                     </div>
                     <div class="text-left">
-                        <div class="font-bold">แจ้งซ่อมเครื่องจักรใหม่</div>
-                        <div class="text-xs text-brand-100">คลิกเพื่อกรอกรายละเอียดและถ่ายรูป</div>
+                        <div class="font-bold text-base md:text-lg">แจ้งซ่อมเครื่องจักรใหม่</div>
+                        <div class="text-xs md:text-sm text-brand-100">คลิกเพื่อกรอกรายละเอียดอาการเสีย</div>
                     </div>
                 </div>
-                <i class="fa-solid fa-chevron-right text-brand-200"></i>
+                <i class="fa-solid fa-chevron-right text-brand-200 text-xl"></i>
             </button>
 
-            <div class="space-y-3">
+            <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                    <h2 class="font-bold text-slate-700 flex items-center gap-2">
+                    <h2 class="font-bold text-slate-700 text-base md:text-lg flex items-center gap-2">
                         <i class="fa-solid fa-list-check text-brand-600"></i> งานแจ้งซ่อมล่าสุด
                     </h2>
-                    <button onclick="switchTab('orders')" class="text-xs font-semibold text-brand-600 hover:underline">ดูทั้งหมด</button>
+                    <button onclick="switchTab('orders')" class="text-xs md:text-sm font-semibold text-brand-600 hover:underline">ดูทั้งหมด</button>
                 </div>
-                <div id="dashboard-orders-list" class="space-y-3"></div>
+                <!-- รายการงานใน PC จะแสดงเป็นตารางซ้อนกัน 2-3 แถว -->
+                <div id="dashboard-orders-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </section>
 
         <!-- TAB 2: CREATE REQUEST FORM -->
-        <section id="tab-create" class="hidden space-y-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold text-slate-800 border-b pb-3 mb-4 flex items-center gap-2">
+        <section id="tab-create" class="hidden max-w-2xl mx-auto space-y-4">
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg md:text-xl font-bold text-slate-800 border-b pb-4 mb-5 flex items-center gap-2">
                     <i class="fa-solid fa-file-circle-plus text-brand-600"></i> ฟอร์มแจ้งซ่อมเครื่องจักร
                 </h2>
-                <form id="repair-form" onsubmit="handleCreateOrder(event)" class="space-y-4">
+                <form id="repair-form" onsubmit="handleCreateOrder(event)" class="space-y-5">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">เลือกเครื่องจักร <span class="text-rose-500">*</span></label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-600 mb-1">เลือกเครื่องจักร <span class="text-rose-500">*</span></label>
                         <select id="form-machine-id" required class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ระดับความเร่งด่วน</label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-600 mb-1">ระดับความเร่งด่วน</label>
                         <select id="form-urgency" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="ปกติ">ปกติ (Normal)</option>
                             <option value="ด่วน">ด่วน (Urgent)</option>
@@ -149,29 +165,28 @@
                         </select>
                     </div>
 
-                    <!-- ข้อมูลผู้แจ้งซ่อม (ใช้เฉพาะรหัสพนักงาน + ชื่อเล่น) -->
-                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                        <span class="text-xs font-bold text-slate-700 block">ข้อมูลผู้แจ้งซ่อม</span>
-                        <div class="grid grid-cols-2 gap-2">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                        <span class="text-xs md:text-sm font-bold text-slate-700 block">ข้อมูลผู้แจ้งซ่อม</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">รหัสพนักงาน <span class="text-rose-500">*</span></label>
-                                <input type="text" id="form-reporter-emp-id" required placeholder="เช่น EMP-01" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">รหัสพนักงาน <span class="text-rose-500">*</span></label>
+                                <input type="text" id="form-reporter-emp-id" required placeholder="เช่น EMP-01" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">ชื่อเล่น <span class="text-rose-500">*</span></label>
-                                <input type="text" id="form-reporter-nickname" required placeholder="เช่น พงษ์" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <label class="block text-xs font-semibold text-slate-500 mb-1">ชื่อเล่น <span class="text-rose-500">*</span></label>
+                                <input type="text" id="form-reporter-nickname" required placeholder="เช่น พงษ์" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รายละเอียดอาการเสีย / ปัญหาที่พบ <span class="text-rose-500">*</span></label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-600 mb-1">รายละเอียดอาการเสีย / ปัญหาที่พบ <span class="text-rose-500">*</span></label>
                         <textarea id="form-symptom" required rows="3" placeholder="ระบุอาการเสีย..." class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
                     </div>
 
                     <div class="pt-2">
-                        <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md transition-all">
-                            <i class="fa-solid fa-paper-plane mr-1"></i> บันทึกส่งแจ้งซ่อม
+                        <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl shadow-md transition-all text-sm md:text-base">
+                            <i class="fa-solid fa-paper-plane mr-2"></i> บันทึกส่งแจ้งซ่อม
                         </button>
                     </div>
                 </form>
@@ -181,20 +196,20 @@
         <!-- TAB 3: WORK ORDERS LIST -->
         <section id="tab-orders" class="hidden space-y-4">
             <!-- Filter Bar -->
-            <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
-                <button onclick="filterOrders('ทั้งหมด')" class="filter-btn bg-brand-600 text-white px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ทั้งหมด</button>
-                <button onclick="filterOrders('รอรับเรื่อง')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รอรับเรื่อง</button>
-                <button onclick="filterOrders('กำลังซ่อม')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">กำลังซ่อม</button>
-                <button onclick="filterOrders('รออะไหล่')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">รออะไหล่</button>
-                <button onclick="filterOrders('ซ่อมเสร็จสิ้น')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm">ซ่อมเสร็จสิ้น</button>
+            <div class="flex gap-2 overflow-x-auto pb-1 text-xs md:text-sm">
+                <button onclick="filterOrders('ทั้งหมด')" class="filter-btn bg-brand-600 text-white px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm">ทั้งหมด</button>
+                <button onclick="filterOrders('รอรับเรื่อง')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm">รอรับเรื่อง</button>
+                <button onclick="filterOrders('กำลังซ่อม')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm">กำลังซ่อม</button>
+                <button onclick="filterOrders('รออะไหล่')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm">รออะไหล่</button>
+                <button onclick="filterOrders('ซ่อมเสร็จสิ้น')" class="filter-btn bg-white text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm">ซ่อมเสร็จสิ้น</button>
             </div>
 
-            <div id="full-orders-list" class="space-y-3"></div>
+            <div id="full-orders-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
         <!-- TAB 4: DATA MANAGEMENT -->
         <section id="tab-settings" class="hidden space-y-4">
-            <div class="flex bg-slate-200 p-1 rounded-xl text-xs font-semibold">
+            <div class="flex max-w-md mx-auto bg-slate-200 p-1 rounded-xl text-xs font-semibold mb-4">
                 <button onclick="switchSettingsSubTab('mechanics')" id="subtab-btn-mechanics" class="flex-1 py-2 rounded-lg bg-white shadow-sm text-brand-700 text-center">
                     <i class="fa-solid fa-user-gear mr-1"></i> รายชื่อช่าง
                 </button>
@@ -204,24 +219,24 @@
             </div>
 
             <!-- SUB TAB: MECHANICS MANAGEMENT -->
-            <div id="subtab-mechanics" class="space-y-3">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <div id="subtab-mechanics" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                    <h3 class="text-sm md:text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-user-plus text-brand-600"></i> เพิ่มรายชื่อช่างใหม่
                     </h3>
                     <form onsubmit="handleAddMechanic(event)" class="space-y-3">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">รหัสพนักงาน <span class="text-rose-500">*</span></label>
+                                <label class="block text-[11px] font-semibold text-slate-500 mb-1">รหัสพนักงาน <span class="text-rose-500">*</span></label>
                                 <input type="text" id="add-tech-emp-id" required placeholder="เช่น TECH-01" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-semibold text-slate-500 mb-1">ชื่อเล่น <span class="text-rose-500">*</span></label>
+                                <label class="block text-[11px] font-semibold text-slate-500 mb-1">ชื่อเล่น <span class="text-rose-500">*</span></label>
                                 <input type="text" id="add-tech-nickname" required placeholder="เช่น ชาย" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-semibold text-slate-500 mb-1">ความเชี่ยวชาญ / แผนก</label>
+                            <label class="block text-[11px] font-semibold text-slate-500 mb-1">ความเชี่ยวชาญ / แผนก</label>
                             <input type="text" id="add-tech-skill" placeholder="เช่น ไฟฟ้า, เครื่องกล" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <button type="submit" class="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-xl">
@@ -230,10 +245,10 @@
                     </form>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">รายชื่อช่างในระบบ</h3>
-                        <button onclick="clearAllMechanics()" class="text-[10px] text-rose-500 hover:text-rose-700 underline font-medium">
+                        <button onclick="clearAllMechanics()" class="text-[11px] text-rose-500 hover:text-rose-700 underline font-medium">
                             <i class="fa-solid fa-rotate-left mr-1"></i>ล้างรายชื่อช่างทั้งหมด
                         </button>
                     </div>
@@ -242,9 +257,9 @@
             </div>
 
             <!-- SUB TAB: MACHINES MANAGEMENT -->
-            <div id="subtab-machines" class="hidden space-y-3">
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <div id="subtab-machines" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                    <h3 class="text-sm md:text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i class="fa-solid fa-plus-circle text-brand-600"></i> <span id="mc-form-title">เพิ่มเครื่องจักรใหม่</span>
                     </h3>
                     <form id="machine-form" onsubmit="handleSaveMachine(event)" class="space-y-3">
@@ -289,7 +304,7 @@
                     </form>
                 </div>
 
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                     <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">รายการเครื่องจักรทั้งหมด</h3>
                     <div id="machines-list" class="divide-y divide-slate-100"></div>
                 </div>
@@ -300,7 +315,7 @@
 
     <!-- MODAL: COMPLETE/SUBMIT REPAIR WORK -->
     <div id="action-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-5 shadow-xl">
+        <div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-6 shadow-xl">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
                 <h3 class="font-bold text-slate-800 text-base" id="modal-title">บันทึกการซ่อม / ส่งงาน</h3>
                 <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
@@ -354,8 +369,8 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 shadow-lg">
+    <!-- Bottom Navigation Bar (แสดงเฉพาะใน Mobile) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 shadow-lg">
         <div class="max-w-md mx-auto flex justify-around py-2">
             <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item text-brand-600 flex flex-col items-center">
                 <i class="fa-solid fa-chart-pie text-lg"></i>
@@ -406,18 +421,6 @@
             }
         ];
 
-        // เคลียร์/ปรับโครงสร้างข้อมูลช่างรุ่นเก่าอัตโนมัติ
-        mechanics = mechanics.map(m => {
-            if (!m.nickname && m.name) {
-                return {
-                    empId: m.empId || 'TECH-01',
-                    nickname: m.name.replace('ช่าง', '').split(' ')[0],
-                    skill: m.skill || 'ทั่วไป'
-                };
-            }
-            return m;
-        });
-
         function saveData() {
             localStorage.setItem('app_machines', JSON.stringify(machines));
             localStorage.setItem('app_mechanics', JSON.stringify(mechanics));
@@ -437,15 +440,27 @@
         function switchTab(tabId) {
             ['dashboard', 'create', 'orders', 'settings'].forEach(id => {
                 const el = document.getElementById(`tab-${id}`);
-                const nav = document.getElementById(`nav-${id}`);
+                const navMobile = document.getElementById(`nav-${id}`);
+                const navTop = document.getElementById(`top-nav-${id}`);
+
                 if (id === tabId) {
                     el.classList.remove('hidden');
-                    nav.classList.add('text-brand-600');
-                    nav.classList.remove('text-slate-400');
+                    if (navMobile) {
+                        navMobile.classList.add('text-brand-600');
+                        navMobile.classList.remove('text-slate-400');
+                    }
+                    if (navTop) {
+                        navTop.className = "top-nav-item px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all bg-brand-800 text-white";
+                    }
                 } else {
                     el.classList.add('hidden');
-                    nav.classList.remove('text-brand-600');
-                    nav.classList.add('text-slate-400');
+                    if (navMobile) {
+                        navMobile.classList.remove('text-brand-600');
+                        navMobile.classList.add('text-slate-400');
+                    }
+                    if (navTop) {
+                        navTop.className = "top-nav-item px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all text-slate-200 hover:bg-brand-600";
+                    }
                 }
             });
             window.scrollTo(0, 0);
@@ -462,9 +477,9 @@
             const buttons = document.querySelectorAll('.filter-btn');
             buttons.forEach(btn => {
                 if (btn.innerText.trim().includes(currentFilterStatus)) {
-                    btn.className = "filter-btn bg-brand-600 text-white px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm";
+                    btn.className = "filter-btn bg-brand-600 text-white px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm";
                 } else {
-                    btn.className = "filter-btn bg-white text-slate-600 border border-slate-200 px-3 py-2 rounded-xl font-medium whitespace-nowrap shadow-sm";
+                    btn.className = "filter-btn bg-white text-slate-600 border border-slate-200 px-4 py-2.5 rounded-xl font-medium whitespace-nowrap shadow-sm";
                 }
             });
 
@@ -480,7 +495,7 @@
             }
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 text-xs">ไม่พบรายการแจ้งซ่อม</div>`;
+                container.innerHTML = `<div class="col-span-full bg-white p-8 rounded-2xl text-center text-slate-400 text-xs">ไม่พบรายการแจ้งซ่อม</div>`;
                 return;
             }
             container.innerHTML = [...filtered].reverse().map(o => createOrderCardHTML(o)).join('');
@@ -497,11 +512,11 @@
             document.getElementById('stat-waiting-parts').innerText = waitingPartsCount;
             document.getElementById('stat-completed').innerText = completedCount;
 
-            const recentOrders = [...workOrders].reverse().slice(0, 3);
+            const recentOrders = [...workOrders].reverse().slice(0, 6);
             const container = document.getElementById('dashboard-orders-list');
             
             if (recentOrders.length === 0) {
-                container.innerHTML = `<div class="bg-white p-6 rounded-2xl text-center text-slate-400 text-xs">ยังไม่มีรายการแจ้งซ่อม</div>`;
+                container.innerHTML = `<div class="col-span-full bg-white p-6 rounded-2xl text-center text-slate-400 text-xs">ยังไม่มีรายการแจ้งซ่อม</div>`;
                 return;
             }
 
@@ -512,13 +527,13 @@
             const mc = machines.find(m => m.id === o.machineId) || { name: 'เครื่องจักรทั่วไป', location: '-', line: '-' };
             const statusStr = (o.status || '').trim();
             
-            let statusBadge = '<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รอรับเรื่อง</span>';
+            let statusBadge = '<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-full">รอรับเรื่อง</span>';
             if (statusStr === 'กำลังซ่อม') {
-                statusBadge = '<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full">กำลังซ่อม</span>';
+                statusBadge = '<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2.5 py-1 rounded-full">กำลังซ่อม</span>';
             } else if (statusStr === 'รออะไหล่') {
-                statusBadge = '<span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">รออะไหล่</span>';
+                statusBadge = '<span class="bg-purple-100 text-purple-700 text-[10px] font-bold px-2.5 py-1 rounded-full">รออะไหล่</span>';
             } else if (statusStr === 'ซ่อมเสร็จสิ้น' || statusStr === 'เสร็จสิ้น') {
-                statusBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full">ซ่อมเสร็จสิ้น</span>';
+                statusBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-full">ซ่อมเสร็จสิ้น</span>';
             }
 
             const urgencyBadge = o.urgency === 'ด่วนที่สุด' 
@@ -531,38 +546,40 @@
             if (o.reporterEmpId) reporterText = `[${o.reporterEmpId}] ` + reporterText;
 
             return `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2 relative">
-                    <div class="flex justify-between items-start pr-6">
-                        <div>
-                            <span class="text-xs font-bold text-slate-400">${o.id}</span>
-                            <h3 class="font-bold text-slate-800 text-sm">${mc.name} (${o.machineId})</h3>
-                            <p class="text-[11px] text-slate-500">
-                                <i class="fa-solid fa-location-dot"></i> ${mc.location || '-'} | <i class="fa-solid fa-industry"></i> ${mc.line || '-'}
-                            </p>
+                <div class="bg-white p-4.5 rounded-2xl shadow-sm border border-slate-200 space-y-3 relative flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-start pr-6">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400">${o.id}</span>
+                                <h3 class="font-bold text-slate-800 text-sm md:text-base">${mc.name} (${o.machineId})</h3>
+                                <p class="text-[11px] md:text-xs text-slate-500 mt-0.5">
+                                    <i class="fa-solid fa-location-dot"></i> ${mc.location || '-'} | <i class="fa-solid fa-industry"></i> ${mc.line || '-'}
+                                </p>
+                            </div>
+                            <div class="flex flex-col items-end gap-1">
+                                ${statusBadge}
+                                ${urgencyBadge}
+                            </div>
                         </div>
-                        <div class="flex flex-col items-end gap-1">
-                            ${statusBadge}
-                            ${urgencyBadge}
+
+                        <button onclick="deleteWorkOrder('${o.id}')" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 p-1 transition-colors" title="ลบงานซ่อม">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+
+                        <div class="bg-slate-50 p-3 rounded-xl text-xs md:text-sm text-slate-700">
+                            <span class="font-semibold text-slate-800">อาการ:</span> ${o.symptom}
                         </div>
+
+                        ${o.solution ? `
+                            <div class="text-xs md:text-sm text-emerald-800 bg-emerald-50/60 p-2.5 rounded-lg">
+                                <span class="font-semibold">วิธีแก้ไข:</span> ${o.solution}
+                            </div>
+                        ` : ''}
                     </div>
 
-                    <button onclick="deleteWorkOrder('${o.id}')" class="absolute top-3 right-3 text-slate-300 hover:text-rose-500 p-1 transition-colors" title="ลบงานซ่อม">
-                        <i class="fa-solid fa-trash-can text-sm"></i>
-                    </button>
-
-                    <div class="bg-slate-50 p-2.5 rounded-xl text-xs text-slate-700">
-                        <span class="font-semibold text-slate-800">อาการ:</span> ${o.symptom}
-                    </div>
-
-                    ${o.solution ? `
-                        <div class="text-xs text-emerald-800 bg-emerald-50/60 p-2 rounded-lg">
-                            <span class="font-semibold">วิธีแก้ไข:</span> ${o.solution}
-                        </div>
-                    ` : ''}
-
-                    <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1 border-t">
+                    <div class="flex justify-between items-center text-[11px] md:text-xs text-slate-400 pt-2 border-t mt-auto">
                         <span>ผู้แจ้ง: ${reporterText} | ${o.createdAt}</span>
-                        <button onclick="openActionModal('${o.id}')" class="text-xs font-semibold text-brand-600 hover:text-brand-800 bg-brand-50 px-2.5 py-1 rounded-lg">
+                        <button onclick="openActionModal('${o.id}')" class="text-xs font-semibold text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-all">
                             <i class="fa-solid fa-wrench"></i> ${statusStr === 'ซ่อมเสร็จสิ้น' || statusStr === 'เสร็จสิ้น' ? 'ดู/แก้ไข' : 'จัดการงาน'}
                         </button>
                     </div>
@@ -703,18 +720,18 @@
                 return;
             }
             container.innerHTML = machines.map((m) => `
-                <div class="py-2.5 flex justify-between items-center text-xs">
+                <div class="py-3 flex justify-between items-center text-xs md:text-sm">
                     <div>
                         <div class="font-bold text-brand-700">${m.id} - ${m.name}</div>
-                        <div class="text-[10px] text-slate-400">
+                        <div class="text-[10px] md:text-xs text-slate-400 mt-0.5">
                             ที่ตั้ง: <span class="font-medium text-slate-600">${m.location || '-'}</span> | ไลน์ผลิต: <span class="font-medium text-slate-600">${m.line || '-'}</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-1">
-                        <button onclick="editMachine('${m.id}')" class="text-amber-600 hover:text-amber-800 p-1 font-medium text-[11px]" title="แก้ไข">
+                        <button onclick="editMachine('${m.id}')" class="text-amber-600 hover:text-amber-800 p-1.5 font-medium text-[11px] md:text-xs" title="แก้ไข">
                             <i class="fa-solid fa-pen-to-square"></i> แก้ไข
                         </button>
-                        <button onclick="deleteMachine('${m.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="ลบ">
+                        <button onclick="deleteMachine('${m.id}')" class="text-rose-500 hover:text-rose-700 p-1.5" title="ลบ">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
@@ -795,14 +812,14 @@
                 return;
             }
             container.innerHTML = mechanics.map((m, index) => `
-                <div class="py-2.5 flex justify-between items-center text-xs">
+                <div class="py-3 flex justify-between items-center text-xs md:text-sm">
                     <div>
                         <div class="font-semibold text-slate-800">
                             <span class="text-brand-600 font-bold">[${m.empId || 'ไม่ระบุ'}]</span> ช่าง${m.nickname || m.name || '-'}
                         </div>
-                        <div class="text-[10px] text-slate-400">ความเชี่ยวชาญ/แผนก: ${m.skill || 'ทั่วไป'}</div>
+                        <div class="text-[10px] md:text-xs text-slate-400 mt-0.5">ความเชี่ยวชาญ/แผนก: ${m.skill || 'ทั่วไป'}</div>
                     </div>
-                    <button onclick="deleteMechanicByIndex(${index})" class="text-rose-500 hover:text-rose-700 p-1" title="ลบ">
+                    <button onclick="deleteMechanicByIndex(${index})" class="text-rose-500 hover:text-rose-700 p-1.5" title="ลบ">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
@@ -836,7 +853,6 @@
             alert('เพิ่มรายชื่อช่างสำเร็จ!');
         }
 
-        // ฟังก์ชันลบช่างตามลำดับ Index (ลบช่างเก่าที่ไม่มีรหัสพนักงานได้แน่นอน)
         function deleteMechanicByIndex(index) {
             const m = mechanics[index];
             const displayName = m ? (m.nickname || m.name || 'ช่างท่านนี้') : 'ช่างท่านนี้';
@@ -848,7 +864,6 @@
             }
         }
 
-        // ปุ่มล้างรายชื่อช่างทั้งหมดสำหรับรีเซ็ตข้อมูลเก่า
         function clearAllMechanics() {
             if (confirm('คุณต้องการลบรายชื่อช่างทั้งหมดในระบบเพื่อเริ่มบันทึกใหม่ใช่หรือไม่?')) {
                 mechanics = [];
