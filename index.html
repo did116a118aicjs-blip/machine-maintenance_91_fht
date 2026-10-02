@@ -379,7 +379,7 @@
     </nav>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQatj9V-bZWwv9D9FcNDPLycY5JIy3ydm9DOibw4qR5Qn0Yckjkqxo8bl2oixCYs95qw/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzCQXfQs9M9OW09W-TYbq0jyWTChbqUZqQmbkpBz7PsH9wyyQsqbXPfnkXY8bRZsbd5AA/exec";
 
         let currentFilterStatus = 'ทั้งหมด';
         let machines = [];
@@ -399,7 +399,10 @@
         function fetchCloudData() {
             showLoading(true);
             fetch(GOOGLE_SCRIPT_URL)
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    return res.json();
+                })
                 .then(data => {
                     machines = data.machines || [];
                     mechanics = data.mechanics || [];
@@ -413,13 +416,22 @@
                     renderMachinesList();
                 })
                 .catch(err => {
-                    alert("ไม่สามารถดึงข้อมูลจาก Google Sheets ได้: " + err);
+                    console.error("Cloud fetch error:", err);
+                    renderDashboard();
+                    renderOrdersList();
+                    renderMechanicsList();
+                    renderMachinesList();
                 })
                 .finally(() => showLoading(false));
         }
 
-        function saveCloudData() {
-            showLoading(true);
+        function saveCloudData(callback) {
+            // อัปเดต UI หน้าจอทันทีโดยไม่ต้องรอ เพื่อความรวดเร็ว
+            renderDashboard();
+            renderOrdersList();
+            renderMechanicsList();
+            renderMachinesList();
+
             const payload = {
                 machines: machines,
                 mechanics: mechanics,
@@ -433,10 +445,9 @@
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                setTimeout(fetchCloudData, 1000);
+                if (callback) callback();
             })
-            .catch(err => alert("การบันทึกล้มเหลว: " + err))
-            .finally(() => showLoading(false));
+            .catch(err => console.error("Sync error:", err));
         }
 
         function switchTab(tabId) {
